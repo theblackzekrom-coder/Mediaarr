@@ -1,8 +1,8 @@
 import re
 
 def parse_torrent_title(title):
-    # Normalize separators to spaces first
-    normalized = title.replace(".", " ").replace("_", " ")
+    # Normalize separators — keep dots before numbers (5.1 stays 5.1)
+    normalized = re.sub(r'\.(?!\d)', ' ', title).replace("_", " ")
     title_upper = normalized.upper()
     
     # Resolution
@@ -41,15 +41,15 @@ def parse_torrent_title(title):
         "source": source
     }
 
-# Test it
-titles = [
-    "The.Bear.S03E01.2160p.UHD.BluRay.HDR10.DTS-X.7.1",
-    "Family.Guy.S21E04.1080p.WEB-DL.DDP5.1",
-    "Inception.2010.4K.UHD.BluRay.HDR10+.TrueHD.Atmos.7.1",
-    "Breaking.Bad.S01E01.720p.HDTV.DD5.1",
-    "Dune.2021.2160p.REMUX.BluRay.DV.TrueHD.Atmos.7.1"
-]
+if __name__ == "__main__":
+    titles = [
+        "The.Bear.S03E01.2160p.UHD.BluRay.HDR10.DTS-X.7.1",
+        "Family.Guy.S21E04.1080p.WEB-DL.DDP5.1",
+        "Inception.2010.4K.UHD.BluRay.HDR10+.TrueHD.Atmos.7.1",
+        "Breaking.Bad.S01E01.720p.HDTV.DD5.1",
+        "Dune.2021.2160p.REMUX.BluRay.DV.TrueHD.Atmos.7.1"
+    ]
 
-for title in titles:
-    print(f"\nTitle: {title}")
-    print(parse_torrent_title(title))
+    for title in titles:
+        print(f"\nTitle: {title}")
+        print(parse_torrent_title(title))
