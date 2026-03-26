@@ -7,51 +7,94 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Mediaarr</h1>
-        <nav>
-            <a href="/">Search</a>
-            <a href="/settings" class="active">Settings</a>
-        </nav>
+    <aside class="sidebar">
+        <div class="sidebar-logo">Media<span>arr</span></div>
+        <a href="/" class="nav-item">
+            <span class="nav-icon">🔍</span> Search
+        </a>
+        <a href="/library" class="nav-item">
+            <span class="nav-icon">🎬</span> Library
+        </a>
+        <a href="/settings" class="nav-item active">
+            <span class="nav-icon">⚙️</span> Settings
+        </a>
+    </aside>
 
-        <div class="settings-box">
-            <form method="POST" action="/settings">
+    <div class="main">
+        <div class="topbar">
+            <span style="color: var(--text-muted); font-size: 0.9rem;">Settings</span>
+        </div>
 
-                <div class="settings-section">
-                    <h2>Prowlarr</h2>
-                    <label>URL</label>
-                    <input type="text" name="prowlarr_url" placeholder="http://192.168.1.50:9696"
-                        value="{{ config.get('prowlarr', {}).get('url', '') }}">
-                    <label>API Key</label>
-                    <input type="text" name="prowlarr_api_key" placeholder="Your Prowlarr API key"
-                        value="{{ config.get('prowlarr', {}).get('api_key', '') }}">
-                </div>
+        <div class="page">
+            <div class="settings-tabs">
+                <a href="/settings" class="tab {% if active == 'connections' %}active{% endif %}">
+                    Connections
+                </a>
+                <a href="/settings/profiles" class="tab {% if active == 'profiles' %}active{% endif %}">
+                    Profiles
+                </a>
+            </div>
 
-                <div class="settings-section">
-                    <h2>qBittorrent</h2>
-                    <label>URL</label>
-                    <input type="text" name="qbit_url" placeholder="http://192.168.1.50:8080"
-                        value="{{ config.get('qbittorrent', {}).get('url', '') }}">
-                    <label>Username</label>
-                    <input type="text" name="qbit_username" placeholder="admin"
-                        value="{{ config.get('qbittorrent', {}).get('username', '') }}">
-                    <label>Password</label>
-                    <input type="password" name="qbit_password" placeholder="password"
-                        value="{{ config.get('qbittorrent', {}).get('password', '') }}">
-                </div>
+            <div class="settings-box">
+                <form method="POST" action="/settings">
 
-                <div class="settings-section">
-                    <h2>Jellyfin</h2>
-                    <label>URL</label>
-                    <input type="text" name="jellyfin_url" placeholder="http://192.168.1.50:8096"
-                        value="{{ config.get('jellyfin', {}).get('url', '') }}">
-                    <label>API Key</label>
-                    <input type="text" name="jellyfin_api_key" placeholder="Your Jellyfin API key"
-                        value="{{ config.get('jellyfin', {}).get('api_key', '') }}">
-                </div>
+                    <div class="settings-section">
+                        <h2>Prowlarr</h2>
+                        <div class="form-group">
+                            <label>URL</label>
+                            <input type="text" name="prowlarr_url"
+                                placeholder="http://192.168.1.50:9696"
+                                value="{{ config.get('prowlarr', {}).get('url', '') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <input type="text" name="prowlarr_api_key"
+                                placeholder="Your Prowlarr API key"
+                                value="{{ config.get('prowlarr', {}).get('api_key', '') }}">
+                        </div>
+                    </div>
 
-                <button type="submit">Save Settings</button>
-            </form>
+                    <div class="settings-section">
+                        <h2>qBittorrent</h2>
+                        <div class="form-group">
+                            <label>URL</label>
+                            <input type="text" name="qbit_url"
+                                placeholder="http://192.168.1.50:8080"
+                                value="{{ config.get('qbittorrent', {}).get('url', '') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" name="qbit_username"
+                                placeholder="admin"
+                                value="{{ config.get('qbittorrent', {}).get('username', '') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" name="qbit_password"
+                                placeholder="password"
+                                value="{{ config.get('qbittorrent', {}).get('password', '') }}">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Jellyfin</h2>
+                        <div class="form-group">
+                            <label>URL</label>
+                            <input type="text" name="jellyfin_url"
+                                placeholder="http://192.168.1.50:8096"
+                                value="{{ config.get('jellyfin', {}).get('url', '') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <input type="text" name="jellyfin_api_key"
+                                placeholder="Your Jellyfin API key"
+                                value="{{ config.get('jellyfin', {}).get('api_key', '') }}">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                </form>
+            </div>
         </div>
     </div>
 </body>

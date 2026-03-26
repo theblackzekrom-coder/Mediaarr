@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Default",
+        "resolutions": [
+            "2160p",
+            "1080p",
+            "720p",
+            "480p"
+        ],
+        "hdr_formats": [
+            "DOLBY VISION",
+            "HDR10+",
+            "HDR10",
+            "HLG",
+            "SDR"
+        ],
+        "audio_formats": [
+            "TRUEHD ATMOS",
+            "TRUEHD",
+            "DTS-X",
+            "DTS-HD MA",
+            "DTS-HD",
+            "DOLBY ATMOS",
+            "DDP5.1",
+            "DDP",
+            "DD5.1",
+            "EAC3",
+            "AC3",
+            "DTS",
+            "FLAC",
+            "AAC",
+            "MP3",
+            "STEREO"
+        ],
+        "sources": [
+            "REMUX",
+            "BLURAY",
+            "WEB-DL",
+            "WEBRIP",
+            "HDTV"
+        ],
+        "is_default": true
+    }
+]

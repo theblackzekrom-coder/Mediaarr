@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediaarr — Profiles</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">Media<span>arr</span></div>
+        <a href="/" class="nav-item">
+            <span class="nav-icon">🔍</span> Search
+        </a>
+        <a href="/library" class="nav-item">
+            <span class="nav-icon">🎬</span> Library
+        </a>
+        <a href="/settings" class="nav-item active">
+            <span class="nav-icon">⚙️</span> Settings
+        </a>
+    </aside>
+
+    <div class="main">
+        <div class="topbar">
+            <span style="color: var(--text-muted); font-size: 0.9rem;">Settings</span>
+        </div>
+
+        <div class="page">
+            <div class="settings-tabs">
+                <a href="/settings" class="tab">Connections</a>
+                <a href="/settings/profiles" class="tab active">Profiles</a>
+            </div>
+
+            <div class="profiles-layout">
+
+                <!-- Profile List -->
+                <div class="profile-list" id="profile_list">
+                    {% for p in profiles %}
+                    <div class="profile-item {% if p.is_default %}default{% endif %}"
+                         onclick="loadProfileEditor('{{ p.name }}')">
+                        <span>{{ p.name }}</span>
+                        {% if p.is_default %}
+                        <span class="default-badge">Default</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <button class="btn btn-ghost" style="margin-top: 10px; width: 100%"
+                        onclick="newProfile()">+ New Profile</button>
+                </div>
+
+                <!-- Profile Editor -->
+                <div class="profile-editor" id="profile_editor">
+                    <p style="color: var(--text-muted)">Select a profile to edit</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allResolutions = {{ all_resolutions | tojson }}
+        const allHdr = {{ all_hdr | tojson }}
+        const allAudio = {{ all_audio | tojson }}
+        const allSources = {{ all_sources | tojson }}
+        const profiles = {{ profiles | tojson }}
+
+        function loadProfileEditor(name) {
+            const profile = profiles.find(p => p.name === name)
+            if (!profile) return
+            renderEditor(profile)
+        }
+
+        function newProfile() {
+            renderEditor({
+                name: "",
+                resolutions: [...allResolutions],
+                hdr_formats: [...allHdr],
+                audio_formats: [...allAudio],
+                sources: [...allSources],
+                is_default: false
+            }, true)
+        }
+
+        function renderEditor(profile, isNew = false) {
+            document.getElementById("profile_editor").innerHTML = `
+                <div class="settings-section">
+                    <h2>${isNew ? "New Profile" : "Edit Profile"}</h2>
+
+                    <div class="form-group">
+                        <label>Profile Name</label>
+                        <input type="text" id="edit_name" value="${profile.name}"
+                            placeholder="e.g. 4K Remux" class="search-input"
+                            ${!isNew && profile.name === "Default" ? "readonly" : ""}>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="check-item" style="margin-top: 10px">
+                            <input type="checkbox" id="edit_default"
+                                ${profile.is_default ? "checked" : ""}> Set as default profile
+                        </label>
+                    </div>
+
+                    ${renderCheckGroup("Resolution", "edit_res", allResolutions, profile.resolutions)}
+                    ${renderCheckGroup("HDR Format", "edit_hdr", allHdr, profile.hdr_formats)}
+                    ${renderCheckGroup("Audio Format", "edit_audio", allAudio, profile.audio_formats)}
+                    ${renderCheckGroup("Source", "edit_source", allSources, profile.sources)}
+
+                    <div style="display: flex; gap: 10px; margin-top: 20px">
+                        <button class="btn btn-primary" onclick="saveProfile('${profile.name}')">
+                            Save Profile
+                        </button>
+                        ${!isNew && profile.name !== "Default" ? `
+                        <button class="btn btn-ghost" onclick="deleteProfile('${profile.name}')">
+                            Delete
+                        </button>` : ""}
+                    </div>
+                </div>
+            `
+        }
+
+        function renderCheckGroup(label, id, all, selected) {
+            const checks = all.map(item => `
+                <label class="check-item">
+                    <input type="checkbox" data-group="${id}" value="${item}"
+                        ${selected.includes(item) ? "checked" : ""}> ${item}
+                </label>
+            `).join("")
+
+            return `
+                <div class="filter-group" style="margin-top: 16px">
+                    <div class="filter-label">
+                        ${label}
+                        <label class="any-toggle">
+                            <input type="checkbox" onchange="toggleGroupAny(this, '${id}')"> ANY
+                        </label>
+                    </div>
+                    <div class="filter-checks">${checks}</div>
+                </div>
+            `
+        }
+
+        function toggleGroupAny(cb, group) {
+            document.querySelectorAll(`[data-group="${group}"]`).forEach(c => {
+                c.checked = cb.checked
+                c.disabled = cb.checked
+            })
+        }
+
+        function getGroupChecked(group) {
+            return [...document.querySelectorAll(`[data-group="${group}"]:checked`)]
+                .map(cb => cb.value)
+        }
+
+        async function saveProfile(originalName) {
+            const name = document.getElementById("edit_name").value.trim()
+            if (!name) { alert("Please enter a profile name"); return }
+
+            const data = {
+                name,
+                resolutions: getGroupChecked("edit_res"),
+                hdr_formats: getGroupChecked("edit_hdr"),
+                audio_formats: getGroupChecked("edit_audio"),
+                sources: getGroupChecked("edit_source"),
+                is_default: document.getElementById("edit_default").checked
+            }
+
+            await fetch("/settings/profiles/save", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(data)
+            })
+
+            window.location.reload()
+        }
+
+        async function deleteProfile(name) {
+            if (!confirm(`Delete profile "${name}"?`)) return
+            await fetch("/settings/profiles/delete", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({name})
+            })
+            window.location.reload()
+        }
+    </script>
+</body>
+</html>

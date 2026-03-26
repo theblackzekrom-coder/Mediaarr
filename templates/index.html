@@ -7,49 +7,194 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Mediaarr</h1>
+    <aside class="sidebar">
+        <div class="sidebar-logo">Media<span>arr</span></div>
+        <a href="/" class="nav-item active">
+            <span class="nav-icon">🔍</span> Search
+        </a>
+        <a href="/library" class="nav-item">
+            <span class="nav-icon">🎬</span> Library
+        </a>
+        <a href="/settings" class="nav-item">
+            <span class="nav-icon">⚙️</span> Settings
+        </a>
+    </aside>
 
-        <div class="search-box">
-            <input type="text" id="query" placeholder="Search for a movie or show...">
-            
-            <div class="filters">
-                <select id="resolution">
-                    <option value="2160p">4K</option>
-                    <option value="1080p" selected>1080p</option>
-                    <option value="720p">720p</option>
-                </select>
-
-                <select id="audio_min">
-                    <option value="TRUEHD ATMOS">TrueHD Atmos</option>
-                    <option value="DTS-X">DTS-X</option>
-                    <option value="TRUEHD">TrueHD</option>
-                    <option value="DDP5.1" selected>DDP5.1</option>
-                    <option value="DD5.1">DD5.1</option>
-                    <option value="AAC">AAC</option>
-                </select>
-
-                <label>
-                    <input type="checkbox" id="hdr_required"> HDR Required
-                </label>
-
-                <button onclick="search()">Search</button>
-            </div>
+    <div class="main">
+        <div class="topbar">
+            <input type="text" id="query" class="search-input"
+                placeholder="Search for a movie or show..."
+                onkeydown="if(event.key === 'Enter') search()">
+            <select id="profile_select" class="profile-select" onchange="loadProfile()">
+                {% for p in profiles %}
+                <option value="{{ p.name }}" {% if p.is_default %}selected{% endif %}>
+                    {{ p.name }}
+                </option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary" onclick="search()">Search</button>
         </div>
 
-        <div id="results" class="results"></div>
+        <div class="page">
+            <div class="filter-panel">
+
+                <div class="filter-group">
+                    <div class="filter-label">
+                        Resolution
+                        <label class="any-toggle">
+                            <input type="checkbox" id="res_any" onchange="toggleAny('res')"> ANY
+                        </label>
+                    </div>
+                    <div class="filter-checks" id="res_checks">
+                        {% for res in all_resolutions %}
+                        <label class="check-item">
+                            <input type="checkbox" name="resolution" value="{{ res }}"
+                                {% if res in profile.resolutions %}checked{% endif %}>
+                            {{ res }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <div class="filter-label">
+                        HDR Format
+                        <label class="any-toggle">
+                            <input type="checkbox" id="hdr_any" onchange="toggleAny('hdr')"> ANY
+                        </label>
+                    </div>
+                    <div class="filter-checks" id="hdr_checks">
+                        {% for hdr in all_hdr %}
+                        <label class="check-item">
+                            <input type="checkbox" name="hdr" value="{{ hdr }}"
+                                {% if hdr in profile.hdr_formats %}checked{% endif %}>
+                            {{ hdr }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <div class="filter-label">
+                        Audio Format
+                        <label class="any-toggle">
+                            <input type="checkbox" id="audio_any" onchange="toggleAny('audio')"> ANY
+                        </label>
+                    </div>
+                    <div class="filter-checks" id="audio_checks">
+                        {% for audio in all_audio %}
+                        <label class="check-item">
+                            <input type="checkbox" name="audio" value="{{ audio }}"
+                                {% if audio in profile.audio_formats %}checked{% endif %}>
+                            {{ audio }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <div class="filter-label">
+                        Source
+                        <label class="any-toggle">
+                            <input type="checkbox" id="source_any" onchange="toggleAny('source')"> ANY
+                        </label>
+                    </div>
+                    <div class="filter-checks" id="source_checks">
+                        {% for source in all_sources %}
+                        <label class="check-item">
+                            <input type="checkbox" name="source" value="{{ source }}"
+                                {% if source in profile.sources %}checked{% endif %}>
+                            {{ source }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <!-- File Browser Modal -->
+    <div id="file_modal" class="modal hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>Select Download Path</span>
+                <button class="modal-close" onclick="closeFileBrowser()">✕</button>
+            </div>
+            <div class="modal-path" id="modal_current_path">—</div>
+            <div class="modal-items" id="modal_items"></div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeFileBrowser()">Cancel</button>
+                <button class="btn btn-primary" onclick="selectPath()">Select This Folder</button>
+            </div>
+        </div>
     </div>
 
     <script>
+        let currentBrowsePath = null
+        let currentBrowseIndex = 0
+
+        function toggleAny(type) {
+            const map = {
+                res: { any: "res_any", checks: "res_checks", name: "resolution" },
+                hdr: { any: "hdr_any", checks: "hdr_checks", name: "hdr" },
+                audio: { any: "audio_any", checks: "audio_checks", name: "audio" },
+                source: { any: "source_any", checks: "source_checks", name: "source" }
+            }
+            const m = map[type]
+            const anyChecked = document.getElementById(m.any).checked
+            document.querySelectorAll(`#${m.checks} input`).forEach(cb => {
+                cb.checked = anyChecked
+                cb.disabled = anyChecked
+            })
+        }
+
+        function getChecked(name) {
+            return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
+                .map(cb => cb.value)
+        }
+
+        async function loadProfile() {
+            const name = document.getElementById("profile_select").value
+            const res = await fetch(`/api/profile/${encodeURIComponent(name)}`)
+            const profile = await res.json()
+            updateChecks("resolution", profile.resolutions)
+            updateChecks("hdr", profile.hdr_formats)
+            updateChecks("audio", profile.audio_formats)
+            updateChecks("source", profile.sources)
+        }
+
+        function updateChecks(name, values) {
+            document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
+                cb.checked = values.includes(cb.value)
+                cb.disabled = false
+            })
+        }
+
         async function search() {
             const query = document.getElementById("query").value
-            const resolution = document.getElementById("resolution").value
-            const audio_min = document.getElementById("audio_min").value
-            const hdr_required = document.getElementById("hdr_required").checked
+            if (!query) return
 
-            document.getElementById("results").innerHTML = "Searching..."
+            const resolutions = getChecked("resolution")
+            const hdr_formats = getChecked("hdr")
+            const audio_formats = getChecked("audio")
+            const sources = getChecked("source")
+            const profile_name = document.getElementById("profile_select").value
 
-            const response = await fetch(`/search?query=${query}&resolution=${resolution}&audio_min=${audio_min}&hdr_required=${hdr_required}`)
+            document.getElementById("results").innerHTML = '<p class="loading">Searching...</p>'
+
+            const params = new URLSearchParams({
+                query,
+                profile_name,
+                resolutions: resolutions.join(","),
+                hdr_formats: hdr_formats.join(","),
+                audio_formats: audio_formats.join(","),
+                sources: sources.join(",")
+            })
+
+            const response = await fetch(`/search?${params}`)
             const data = await response.json()
 
             if (data.error) {
@@ -57,35 +202,93 @@
                 return
             }
 
-            document.getElementById("results").innerHTML = `
+            const html = data.results.map((r, i) => `
                 <div class="result-card">
-                    <h2>${data.title}</h2>
+                    ${i === 0 ? '<span class="best-badge">Best Match</span>' : ''}
+                    <p class="result-title">${r.title}</p>
                     <div class="badges">
-                        <span class="badge">${data.parsed.resolution || "Unknown"}</span>
-                        <span class="badge">${data.parsed.hdr || "SDR"}</span>
-                        <span class="badge">${data.parsed.audio || "Unknown"}</span>
-                        <span class="badge">${data.parsed.source || "Unknown"}</span>
+                        <span class="badge">${r.parsed.resolution || "Unknown"}</span>
+                        <span class="badge">${r.parsed.hdr || "SDR"}</span>
+                        <span class="badge">${r.parsed.audio || "Unknown"}</span>
+                        <span class="badge">${r.parsed.source || "Unknown"}</span>
                     </div>
-                    <p>Size: ${data.size_gb} GB | Seeders: ${data.seeders}</p>
+                    <p class="result-meta">${r.size_gb} GB &nbsp;·&nbsp; ${r.seeders} Seeders</p>
                     <div class="download-section">
-                        <input type="text" id="save_path" placeholder="Download path e.g. /downloads/TV/Family Guy" />
-                        <button onclick="download('${data.download_url}')">Add to qBittorrent</button>
+                        <input type="text" id="save_path_${i}" class="search-input"
+                            placeholder="Click to select folder..." readonly
+                            onclick="openFileBrowser(${i})">
+                        <button class="btn btn-ghost" onclick="openFileBrowser(${i})">Browse</button>
+                        <button class="btn btn-primary" onclick="download('${r.download_url}', ${i})">
+                            Add to qBit
+                        </button>
                     </div>
                 </div>
-            `
+            `).join("")
+
+            document.getElementById("results").innerHTML = html
         }
 
-        async function download(download_url) {
-            const save_path = document.getElementById("save_path").value
-
+        async function download(download_url, index) {
+            const save_path = document.getElementById(`save_path_${index}`).value
+            if (!save_path) {
+                alert("Please select a download folder first")
+                return
+            }
             const response = await fetch("/download", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({download_url, save_path})
             })
-
             const data = await response.json()
             alert(data.status)
+        }
+
+        async function openFileBrowser(index = 0) {
+            currentBrowseIndex = index
+            document.getElementById("file_modal").classList.remove("hidden")
+            await browseDir(null)
+        }
+
+        async function browseDir(path) {
+            const url = path ? `/browse?path=${encodeURIComponent(path)}` : "/browse"
+            const res = await fetch(url)
+            const data = await res.json()
+
+            currentBrowsePath = data.current
+            document.getElementById("modal_current_path").textContent = data.current || "My Computer"
+
+            let html = ""
+
+            if (data.parent !== null && data.parent !== undefined) {
+                html += `<div class="dir-item" onclick="browseDir('${escPath(data.parent)}')">
+                    <span>⬆️</span> ..
+                </div>`
+            }
+
+            data.items.forEach(item => {
+                html += `<div class="dir-item" onclick="browseDir('${escPath(item.path)}')">
+                    <span>${item.type === "drive" ? "💾" : "📁"}</span> ${item.name}
+                </div>`
+            })
+
+            if (!html) html = '<p style="color: var(--text-muted); padding: 10px;">Empty folder</p>'
+
+            document.getElementById("modal_items").innerHTML = html
+        }
+
+        function escPath(path) {
+            return path.replace(/\\/g, "\\\\").replace(/'/g, "\\'")
+        }
+
+        function selectPath() {
+            if (currentBrowsePath) {
+                document.getElementById(`save_path_${currentBrowseIndex}`).value = currentBrowsePath
+            }
+            closeFileBrowser()
+        }
+
+        function closeFileBrowser() {
+            document.getElementById("file_modal").classList.add("hidden")
         }
     </script>
 </body>
