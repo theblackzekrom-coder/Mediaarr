@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediaarr — Settings</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Mediaarr</h1>
+        <nav>
+            <a href="/">Search</a>
+            <a href="/settings" class="active">Settings</a>
+        </nav>
+
+        <div class="settings-box">
+            <form method="POST" action="/settings">
+
+                <div class="settings-section">
+                    <h2>Prowlarr</h2>
+                    <label>URL</label>
+                    <input type="text" name="prowlarr_url" placeholder="http://192.168.1.50:9696"
+                        value="{{ config.get('prowlarr', {}).get('url', '') }}">
+                    <label>API Key</label>
+                    <input type="text" name="prowlarr_api_key" placeholder="Your Prowlarr API key"
+                        value="{{ config.get('prowlarr', {}).get('api_key', '') }}">
+                </div>
+
+                <div class="settings-section">
+                    <h2>qBittorrent</h2>
+                    <label>URL</label>
+                    <input type="text" name="qbit_url" placeholder="http://192.168.1.50:8080"
+                        value="{{ config.get('qbittorrent', {}).get('url', '') }}">
+                    <label>Username</label>
+                    <input type="text" name="qbit_username" placeholder="admin"
+                        value="{{ config.get('qbittorrent', {}).get('username', '') }}">
+                    <label>Password</label>
+                    <input type="password" name="qbit_password" placeholder="password"
+                        value="{{ config.get('qbittorrent', {}).get('password', '') }}">
+                </div>
+
+                <div class="settings-section">
+                    <h2>Jellyfin</h2>
+                    <label>URL</label>
+                    <input type="text" name="jellyfin_url" placeholder="http://192.168.1.50:8096"
+                        value="{{ config.get('jellyfin', {}).get('url', '') }}">
+                    <label>API Key</label>
+                    <input type="text" name="jellyfin_api_key" placeholder="Your Jellyfin API key"
+                        value="{{ config.get('jellyfin', {}).get('api_key', '') }}">
+                </div>
+
+                <button type="submit">Save Settings</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

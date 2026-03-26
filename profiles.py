@@ -71,29 +71,28 @@ def get_best_match(torrent_list, profile):
 
     return best_title, best_parsed
 
-# --- TEST ---
+if __name__ == "__main__":
+    torrents = [
+        "Family.Guy.S21E04.1080p.WEB-DL.DDP5.1",
+        "Family.Guy.S21E04.720p.HDTV.DD5.1",
+        "Family.Guy.S21E04.2160p.BluRay.HDR10.DTS-X",
+        "Family.Guy.S21E04.1080p.BluRay.TrueHD.Atmos.7.1",
+        "Family.Guy.S21E04.480p.WEB-DL.AAC",
+    ]
 
-torrents = [
-    "Family.Guy.S21E04.1080p.WEB-DL.DDP5.1",
-    "Family.Guy.S21E04.720p.HDTV.DD5.1",
-    "Family.Guy.S21E04.2160p.BluRay.HDR10.DTS-X",
-    "Family.Guy.S21E04.1080p.BluRay.TrueHD.Atmos.7.1",
-    "Family.Guy.S21E04.480p.WEB-DL.AAC",
-]
+    profile = {
+        "resolution": "1080p",
+        "hdr_required": False,
+        "audio_min": "DDP5.1"
+    }
 
-profile = {
-    "resolution": "1080p",
-    "hdr_required": False,
-    "audio_min": "DDP5.1"
-}
+    print("Available torrents:")
+    for t in torrents:
+        parsed = parse_torrent_title(t)
+        score = score_torrent(parsed)
+        print(f"  Score {score}: {t}")
 
-print("Available torrents:")
-for t in torrents:
-    parsed = parse_torrent_title(t)
-    score = score_torrent(parsed)
-    print(f"  Score {score}: {t}")
-
-print(f"\nProfile: {profile}")
-best, parsed = get_best_match(torrents, profile)
-print(f"\nBest match: {best}")
-print(f"Parsed: {parsed}")
+    print(f"\nProfile: {profile}")
+    best, parsed = get_best_match(torrents, profile)
+    print(f"\nBest match: {best}")
+    print(f"Parsed: {parsed}")

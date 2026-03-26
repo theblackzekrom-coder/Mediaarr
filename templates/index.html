@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediaarr</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Mediaarr</h1>
+
+        <div class="search-box">
+            <input type="text" id="query" placeholder="Search for a movie or show...">
+            
+            <div class="filters">
+                <select id="resolution">
+                    <option value="2160p">4K</option>
+                    <option value="1080p" selected>1080p</option>
+                    <option value="720p">720p</option>
+                </select>
+
+                <select id="audio_min">
+                    <option value="TRUEHD ATMOS">TrueHD Atmos</option>
+                    <option value="DTS-X">DTS-X</option>
+                    <option value="TRUEHD">TrueHD</option>
+                    <option value="DDP5.1" selected>DDP5.1</option>
+                    <option value="DD5.1">DD5.1</option>
+                    <option value="AAC">AAC</option>
+                </select>
+
+                <label>
+                    <input type="checkbox" id="hdr_required"> HDR Required
+                </label>
+
+                <button onclick="search()">Search</button>
+            </div>
+        </div>
+
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        async function search() {
+            const query = document.getElementById("query").value
+            const resolution = document.getElementById("resolution").value
+            const audio_min = document.getElementById("audio_min").value
+            const hdr_required = document.getElementById("hdr_required").checked
+
+            document.getElementById("results").innerHTML = "Searching..."
+
+            const response = await fetch(`/search?query=${query}&resolution=${resolution}&audio_min=${audio_min}&hdr_required=${hdr_required}`)
+            const data = await response.json()
+
+            if (data.error) {
+                document.getElementById("results").innerHTML = `<p class="error">${data.error}</p>`
+                return
+            }
+
+            document.getElementById("results").innerHTML = `
+                <div class="result-card">
+                    <h2>${data.title}</h2>
+                    <div class="badges">
+                        <span class="badge">${data.parsed.resolution || "Unknown"}</span>
+                        <span class="badge">${data.parsed.hdr || "SDR"}</span>
+                        <span class="badge">${data.parsed.audio || "Unknown"}</span>
+                        <span class="badge">${data.parsed.source || "Unknown"}</span>
+                    </div>
+                    <p>Size: ${data.size_gb} GB | Seeders: ${data.seeders}</p>
+                    <div class="download-section">
+                        <input type="text" id="save_path" placeholder="Download path e.g. /downloads/TV/Family Guy" />
+                        <button onclick="download('${data.download_url}')">Add to qBittorrent</button>
+                    </div>
+                </div>
+            `
+        }
+
+        async function download(download_url) {
+            const save_path = document.getElementById("save_path").value
+
+            const response = await fetch("/download", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({download_url, save_path})
+            })
+
+            const data = await response.json()
+            alert(data.status)
+        }
+    </script>
+</body>
+</html>
