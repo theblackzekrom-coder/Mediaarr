@@ -45,7 +45,7 @@ chown -R root:root "$INSTALL_DIR"
 
 # Install dependencies
 echo "Installing dependencies..."
-pip3 install --break-system-packages -r "$INSTALL_DIR/requirements.txt" -q
+pip3 install --ignore-installed --break-system-packages -r "$INSTALL_DIR/requirements.txt" -q
 echo -e "${GREEN}✓ Dependencies installed${NC}"
 
 # Create systemd service
