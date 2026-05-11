@@ -1,7 +1,6 @@
 ```
 config.json
 watchlist.json
- monitor_log.json
- dual_episodes.json
- __pycache__
- 
+monitor_log.json
+dual_episodes.json
+__pycache__
