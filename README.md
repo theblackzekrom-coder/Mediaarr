@@ -43,7 +43,7 @@ Mediaarr was built out of a real frustration: managing a home media server remot
 ### Linux (recommended)
 
 ```bash
-git clone https://github.com/yourusername/mediaarr.git
+git clone https://github.com/theblackzekrom-coder/mediaarr.git
 cd mediaarr
 chmod +x install.sh
 sudo ./install.sh
