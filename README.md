@@ -1,6 +1,6 @@
 # Mediaarr
 
-A self-hosted media manager built to replace the entire arr stack — Sonarr, Radarr, and Bazarr — in a single app.
+A self-hosted media manager built by Claude to replace the entire arr stack — Sonarr, Radarr, and Bazarr — in a single app.
 
 Mediaarr was built out of a real frustration: managing a home media server remotely, from work, meant juggling three separate apps with three separate UIs, three separate configs, and three separate points of failure. Mediaarr collapses all of that into one install, one interface, and one config file.
 
@@ -15,7 +15,6 @@ Mediaarr was built out of a real frustration: managing a home media server remot
 - **File replacement** — upload a transcoded file and Mediaarr swaps it directly in your media server
 - **Subtitles** — search and download subtitles from OpenSubtitles
 - **Poster changer** — scrape and apply custom posters from ThePosterDB
-- **Encode candidates** — scans your library and surfaces bloated files with HandBrake recommendations
 - **Quality profiles** — define exactly what you want (4K DV TrueHD, 1080p WEB-DL, etc.) and Mediaarr scores and picks the best match automatically, with an optional size cap per profile
 
 ## How it differs from Sonarr/Radarr/Bazarr
@@ -29,7 +28,6 @@ Mediaarr was built out of a real frustration: managing a home media server remot
 | Mobile-friendly | No | Yes |
 | File replacement | No | Yes |
 | Poster management | No | Yes |
-| Encode reporting | No | Yes |
 
 ## Requirements
 
@@ -95,7 +93,7 @@ Profiles define what Mediaarr will accept when searching. Create profiles under 
 - Allowed HDR formats (Dolby Vision, HDR10+, HDR10...)
 - Allowed audio formats (TrueHD Atmos, DTS-X, DDP5.1...)
 - Allowed sources (Blu-ray, WEB-DL, REMUX...)
-- Optional size cap in GB — prefers releases under the limit, falls back to best match if nothing fits
+- Optional size cap in GB — prefers releases under the limit, falls back to best match if nothing fits (This only applies to movies)
 
 ## Monitor
 
