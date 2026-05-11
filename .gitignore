@@ -1,6 +1,11 @@
-```
 config.json
 watchlist.json
-monitor_log.json
+profiles.json
 dual_episodes.json
-__pycache__
+monitor_log.json
+__pycache__/
+*.pyc
+*.pyo
+.env
+.DS_Store
+Thumbs.db
