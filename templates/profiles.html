@@ -161,6 +161,17 @@
                     ${renderCheckGroup("Audio Format", "edit_audio", allAudio, profile.audio_formats)}
                     ${renderCheckGroup("Source", "edit_source", allSources, profile.sources)}
 
+                    <div class="filter-group" style="margin-top: 16px">
+                        <div class="filter-label">Size Limit</div>
+                        <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+                            <input type="number" id="edit_max_size" min="1" max="500" step="1"
+                                value="${profile.max_size_gb || ''}"
+                                placeholder="No limit"
+                                style="width:120px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;color:var(--text);font-size:0.88rem;outline:none;">
+                            <span style="font-size:0.82rem;color:var(--text-muted);">GB max — prefers under limit, falls back to best if nothing fits</span>
+                        </div>
+                    </div>
+
                     <div style="display: flex; gap: 10px; margin-top: 20px">
                         <button class="btn btn-primary" onclick="saveProfile('${profile.name}')">
                             Save Profile
@@ -218,6 +229,7 @@
             const name = document.getElementById("edit_name").value.trim()
             if (!name) { alert("Please enter a profile name"); return }
 
+            const maxSizeVal = document.getElementById("edit_max_size").value
             const data = {
                 name,
                 media_type: document.getElementById("edit_media_type").value,
@@ -225,7 +237,8 @@
                 hdr_formats: getGroupChecked("edit_hdr"),
                 audio_formats: getGroupChecked("edit_audio"),
                 sources: getGroupChecked("edit_source"),
-                is_default: document.getElementById("edit_default").checked
+                is_default: document.getElementById("edit_default").checked,
+                max_size_gb: maxSizeVal ? parseFloat(maxSizeVal) : null
             }
 
             await fetch("/settings/profiles/save", {

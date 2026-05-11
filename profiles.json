@@ -40,5 +40,36 @@
             "HDTV"
         ],
         "is_default": true
+    },
+    {
+        "name": "4k preset movies",
+        "media_type": "movie",
+        "resolutions": [
+            "2160p"
+        ],
+        "hdr_formats": [
+            "DOLBY VISION",
+            "HDR10+",
+            "HDR10"
+        ],
+        "audio_formats": [
+            "TRUEHD",
+            "DTS-X",
+            "DTS-HD MA",
+            "DTS-HD",
+            "DOLBY ATMOS",
+            "DDP5.1",
+            "DD5.1",
+            "EAC3"
+        ],
+        "sources": [
+            "REMUX",
+            "BLURAY",
+            "WEB-DL",
+            "WEBRIP",
+            "HDTV"
+        ],
+        "is_default": false,
+        "max_size_gb": 30
     }
 ]

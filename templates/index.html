@@ -75,6 +75,13 @@
                 </option>
                 {% endfor %}
             </select>
+            <select id="sort_select" class="profile-select" style="width:auto;">
+                <option value="score">Best Match</option>
+                <option value="size_asc">Size ↑</option>
+                <option value="size_desc">Size ↓</option>
+                <option value="seeders_desc">Seeders ↓</option>
+                <option value="seeders_asc">Seeders ↑</option>
+            </select>
             <button class="btn btn-primary" onclick="search()">Search</button>
         </div>
 
@@ -215,6 +222,45 @@
             })
         }
 
+        function sortResults(results) {
+            const sort = document.getElementById("sort_select").value
+            const sorted = [...results]
+            if (sort === "size_asc")      sorted.sort((a, b) => a.size_gb - b.size_gb)
+            else if (sort === "size_desc") sorted.sort((a, b) => b.size_gb - a.size_gb)
+            else if (sort === "seeders_desc") sorted.sort((a, b) => (b.seeders || 0) - (a.seeders || 0))
+            else if (sort === "seeders_asc")  sorted.sort((a, b) => (a.seeders || 0) - (b.seeders || 0))
+            // "score" keeps original order (already sorted by backend)
+            return sorted
+        }
+
+        let lastResults = []
+
+        document.getElementById("sort_select").addEventListener("change", () => {
+            if (lastResults.length) renderResults(sortResults(lastResults))
+        })
+
+        function renderResults(results) {
+            const html = results.map((r, i) => `
+                <div class="result-card">
+                    ${i === 0 ? '<span class="best-badge">Best Match</span>' : ''}
+                    <p class="result-title">${r.title}</p>
+                    <div class="badges">
+                        <span class="badge">${r.parsed.resolution || "Unknown"}</span>
+                        <span class="badge">${r.parsed.hdr || "SDR"}</span>
+                        <span class="badge">${r.parsed.audio || "Unknown"}</span>
+                        <span class="badge">${r.parsed.source || "Unknown"}</span>
+                    </div>
+                    <p class="result-meta">${r.size_gb} GB &nbsp;·&nbsp; ${r.seeders} Seeders</p>
+                    <div class="download-section">
+                        <button class="btn btn-primary" onclick="download('${r.download_url}')">
+                            Add to qBit
+                        </button>
+                    </div>
+                </div>
+            `).join("")
+            document.getElementById("results").innerHTML = html
+        }
+
         async function search() {
             const query = document.getElementById("query").value
             if (!query) return
@@ -266,26 +312,8 @@
                 return
             }
 
-            const html = data.results.map((r, i) => `
-                <div class="result-card">
-                    ${i === 0 ? '<span class="best-badge">Best Match</span>' : ''}
-                    <p class="result-title">${r.title}</p>
-                    <div class="badges">
-                        <span class="badge">${r.parsed.resolution || "Unknown"}</span>
-                        <span class="badge">${r.parsed.hdr || "SDR"}</span>
-                        <span class="badge">${r.parsed.audio || "Unknown"}</span>
-                        <span class="badge">${r.parsed.source || "Unknown"}</span>
-                    </div>
-                    <p class="result-meta">${r.size_gb} GB &nbsp;·&nbsp; ${r.seeders} Seeders</p>
-                    <div class="download-section">
-                        <button class="btn btn-primary" onclick="download('${r.download_url}')">
-                            Add to qBit
-                        </button>
-                    </div>
-                </div>
-            `).join("")
-
-            document.getElementById("results").innerHTML = html
+            lastResults = data.results
+            renderResults(sortResults(lastResults))
         }
 
         async function download(download_url) {

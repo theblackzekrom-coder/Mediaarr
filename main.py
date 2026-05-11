@@ -120,8 +120,8 @@ def tmdb_poster(path):
         return None
     return f"https://image.tmdb.org/t/p/w500{path}"
 
-async def tmdb_get_async(path, params=None):
-    return await asyncio.to_thread(tmdb_get, path, params)
+async def tmdb_get_async(path, params=None, ttl=86400):
+    return await asyncio.to_thread(tmdb_get, path, params, ttl)
 
 # --- Media Server ---
 def get_server_config():
@@ -1107,6 +1107,7 @@ async def monitor_add(request: Request):
     monitor_type = body.get("monitor_type", "all")
     storage_path = body.get("storage_path", "")
     profile_name = body.get("profile_name", "")
+    size_limit_gb = body.get("size_limit_gb", None)
     if not tmdb_id or media_type not in ("movie", "tv"):
         return {"error": "tmdb_id and type required"}
     watchlist = load_watchlist()
@@ -1117,6 +1118,8 @@ async def monitor_add(request: Request):
             existing["storage_path"] = storage_path
         if profile_name:
             existing["profile_name"] = profile_name
+        if size_limit_gb is not None:
+            existing["size_limit_gb"] = size_limit_gb
     else:
         watchlist.append({
             "tmdb_id": tmdb_id,
@@ -1125,7 +1128,8 @@ async def monitor_add(request: Request):
             "added": date.today().isoformat(),
             "monitor_type": monitor_type,
             "storage_path": storage_path,
-            "profile_name": profile_name
+            "profile_name": profile_name,
+            "size_limit_gb": size_limit_gb
         })
     save_watchlist(watchlist)
     return {"status": "saved"}
@@ -1211,8 +1215,8 @@ async def run_monitor_cycle():
         title = entry.get("title", "")
         profile_name = entry.get("profile_name", "")
         storage_path = entry.get("storage_path", "")
-
         profile = get_profile_by_name(profile_name) if profile_name else get_default_profile()
+        size_limit_gb = profile.get("max_size_gb") if profile else None
 
         if media_type == "movie":
             # Check if already in library
@@ -1230,6 +1234,9 @@ async def run_monitor_cycle():
             search_query = f"{clean_title} {year}" if year else clean_title
             raw = await asyncio.to_thread(search_prowlarr, search_query)
             print(f"[MONITOR] {title}: Prowlarr returned {len(raw)} results")
+            if raw:
+                print(f"[MONITOR] sample result keys: {list(raw[0].keys())}")
+                print(f"[MONITOR] sample size fields: size={raw[0].get('size')} sizeGB={raw[0].get('sizeGB')} fileSize={raw[0].get('fileSize')}")
             scored = []
             for r in raw:
                 t = r.get("title", "")
@@ -1250,7 +1257,21 @@ async def run_monitor_cycle():
                 continue
 
             scored.sort(key=lambda x: x[0], reverse=True)
-            best = scored[0][1]
+
+            def size_gb(r):
+                return r.get("size", 0) / 1073741824
+
+            for sc, r in scored:
+                print(f"[MONITOR]   scored: {round(size_gb(r),1)}GB {r.get('title','')}")
+
+            if size_limit_gb:
+                under = [(sc, r) for sc, r in scored if size_gb(r) <= float(size_limit_gb)]
+                print(f"[MONITOR] size filter: limit={size_limit_gb}GB, {len(under)}/{len(scored)} under limit")
+                best = under[0][1] if under else scored[0][1]
+            else:
+                best = scored[0][1]
+
+            print(f"[MONITOR] picking: {best.get('title','')} ({round(size_gb(best),1)}GB)")
             dl_url = best.get("downloadUrl") or best.get("magnetUrl") or best.get("infoUrl", "")
             if not dl_url:
                 results.append({"title": title, "type": "movie", "status": "No download URL in result", "skipped": True})
@@ -1352,7 +1373,8 @@ async def run_monitor_cycle():
                         continue
                     parsed = parse_torrent_title(t)
                     if matches_profile(parsed, profile):
-                        print(f"[MONITOR]   PASS: {t}")
+                        size_gb_val = round(r.get("size", 0) / 1073741824, 2)
+                        print(f"[MONITOR]   PASS: {t} ({size_gb_val}GB)")
                         scored.append((score_torrent(parsed), r))
                     else:
                         print(f"[MONITOR]   SKIP profile: {t}")
@@ -1447,11 +1469,11 @@ async def get_all_missing():
         return {"error": "Could not connect to media server"}
     items_raw = await asyncio.to_thread(get_library_items, user_id, "Series")
     today = date.today().isoformat()
-    all_missing = []
-    for series in items_raw:
+
+    async def check_series(series):
         tmdb_id = series.get("ProviderIds", {}).get("Tmdb")
         if not tmdb_id:
-            continue
+            return []
         item_id = series["Id"]
         show_title = series.get("Name", "")
         eps_raw = await asyncio.to_thread(get_episodes, item_id)
@@ -1466,14 +1488,18 @@ async def get_all_missing():
                         have.add(f"S{str(s).zfill(2)}E{str(i).zfill(2)}")
                 else:
                     have.add(f"S{str(s).zfill(2)}E{str(e).zfill(2)}")
-        show_data = tmdb_get(f"/tv/{tmdb_id}")
+        show_data = await tmdb_get_async(f"/tv/{tmdb_id}")
         if not show_data:
-            continue
-        for season in show_data.get("seasons", []):
-            season_num = season["season_number"]
-            if season_num == 0:
-                continue
-            season_data = tmdb_get(f"/tv/{tmdb_id}/season/{season_num}")
+            return []
+        missing = []
+        season_fetches = [
+            tmdb_get_async(f"/tv/{tmdb_id}/season/{s['season_number']}")
+            for s in show_data.get("seasons", [])
+            if s["season_number"] != 0
+        ]
+        season_nums = [s["season_number"] for s in show_data.get("seasons", []) if s["season_number"] != 0]
+        season_results = await asyncio.gather(*season_fetches)
+        for season_num, season_data in zip(season_nums, season_results):
             if not season_data:
                 continue
             for ep in season_data.get("episodes", []):
@@ -1482,12 +1508,16 @@ async def get_all_missing():
                     continue
                 key = f"S{str(season_num).zfill(2)}E{str(ep['episode_number']).zfill(2)}"
                 if key not in have:
-                    all_missing.append({
+                    missing.append({
                         "show": show_title,
                         "jellyfin_id": item_id,
                         "episode": key,
                         "episode_name": ep.get("name", "")
                     })
+        return missing
+
+    results = await asyncio.gather(*[check_series(s) for s in items_raw])
+    all_missing = [item for sublist in results for item in sublist]
     return {"missing": all_missing}
 
 # --- Connection Tests ---
