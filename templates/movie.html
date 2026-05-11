@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediaarr — Movie</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <aside class="sidebar">
+    <div class="sidebar-logo">Media<span>arr</span></div>
+    <a href="/" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+        </span> Search
+    </a>
+    <a href="/library" class="nav-item active">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="2" y="7" width="4" height="14"/><rect x="9" y="4" width="4" height="17"/><rect x="16" y="2" width="4" height="19"/>
+            </svg>
+        </span> Library
+    </a>
+    <a href="/monitor" class="nav-item">
+    <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+    </span> Monitor
+</a>
+    <a href="/collections" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+        </span> Collections
+    </a>
+    <a href="/missing" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+        </span> Missing
+    </a>
+    <a href="/subtitles" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="2" y="4" width="20" height="16" rx="2"/><line x1="7" y1="10" x2="17" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/>
+            </svg>
+        </span> Subtitles
+    </a>
+    <a href="/settings" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+        </span> Settings
+    </a>
+</aside>
+
+    <div class="main">
+        <div class="topbar">
+            <a href="/library" class="btn btn-ghost">← Back to Library</a>
+        </div>
+
+        <div class="page">
+            <div id="movie_content"><p class="loading">Loading...</p></div>
+        </div>
+    </div>
+
+    <script>
+        const jellyfinId = "{{ jellyfin_id }}"
+
+        async function loadMovie() {
+            const res = await fetch(`/api/movie/${jellyfinId}`)
+            const m = await res.json()
+
+            if (m.error) {
+                document.getElementById("movie_content").innerHTML = `<p class="error">${m.error}</p>`
+                return
+            }
+
+            const runtime = m.runtime ? `${Math.floor(m.runtime / 60)}h ${m.runtime % 60}m` : null
+            const rating = m.rating ? m.rating.toFixed(1) : null
+
+            document.getElementById("movie_content").innerHTML = `
+                <div style="display:flex;gap:30px;align-items:flex-start;margin-bottom:30px;">
+                    <div style="flex-shrink:0;">
+                        ${m.poster
+                            ? `<img src="${m.poster}" alt="${m.title}" style="width:200px;border-radius:12px;object-fit:cover;">`
+                            : `<div style="width:200px;height:300px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:3rem;">🎬</div>`
+                        }
+                        <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px;">
+                            <label class="btn btn-ghost btn-sm" style="cursor:pointer;justify-content:center;">
+                                Change Poster
+                                <input type="file" accept="image/*" style="display:none;" onchange="uploadImage(this, 'Primary')">
+                            </label>
+                            <label class="btn btn-ghost btn-sm" style="cursor:pointer;justify-content:center;">
+                                Change Backdrop
+                                <input type="file" accept="image/*" style="display:none;" onchange="uploadImage(this, 'Backdrop')">
+                            </label>
+                        </div>
+                        <div id="image_status" style="font-size:0.82rem;margin-top:8px;text-align:center;"></div>
+                    </div>
+
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:0.75rem;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">🎬 Movie</div>
+                        <h1 style="font-size:1.8rem;font-weight:700;margin-bottom:4px;">${m.title}
+                            ${m.year ? `<span style="color:var(--text-muted);font-size:1.2rem;font-weight:400;">(${m.year})</span>` : ""}
+                        </h1>
+
+                        <div style="display:flex;gap:16px;margin:12px 0;flex-wrap:wrap;">
+                            ${rating ? `<span style="color:var(--text-dim);font-size:0.9rem;">⭐ ${rating}/10</span>` : ""}
+                            ${runtime ? `<span style="color:var(--text-dim);font-size:0.9rem;">🕐 ${runtime}</span>` : ""}
+                            ${m.status ? `<span style="color:var(--text-dim);font-size:0.9rem;">● ${m.status}</span>` : ""}
+                        </div>
+
+                        ${m.genres && m.genres.length ? `
+                            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+                                ${m.genres.map(g => `<span class="badge">${g}</span>`).join("")}
+                            </div>
+                        ` : ""}
+
+                        ${m.overview ? `<p style="font-size:0.9rem;color:var(--text-dim);line-height:1.6;max-width:640px;margin-bottom:24px;">${m.overview}</p>` : ""}
+
+                        ${m.file && m.file.path ? `
+                            <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                                    <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);">File Info</div>
+                                    <label class="btn btn-ghost btn-sm" style="cursor:pointer;">
+                                        Replace File
+                                        <input type="file" style="display:none;" onchange="replaceFile(this)">
+                                    </label>
+                                </div>
+                                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin-bottom:14px;">
+                                    <div>
+                                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Video</div>
+                                        <div style="font-size:0.9rem;">${m.file.video_codec}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Resolution</div>
+                                        <div style="font-size:0.9rem;">${m.file.resolution}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Audio</div>
+                                        <div style="font-size:0.9rem;">${m.file.audio_codec}${m.file.audio_channels ? ` ${m.file.audio_channels}ch` : ""}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Size</div>
+                                        <div style="font-size:0.9rem;">${m.file.size}</div>
+                                    </div>
+                                </div>
+                                <div style="font-size:0.75rem;color:var(--text-muted);word-break:break-all;">${m.file.path}</div>
+                                <div id="replace_status" style="margin-top:10px;font-size:0.85rem;"></div>
+                            </div>
+                        ` : ""}
+                    </div>
+                </div>
+
+                ${m.collection ? `<div id="collection_section"><p class="loading" style="font-size:0.85rem;">Loading collection...</p></div>` : ""}
+            `
+
+            if (m.collection) {
+                loadCollection(m.collection.id, m.collection.name)
+            }
+        }
+
+        async function uploadImage(input, type) {
+            const file = input.files[0]
+            if (!file) return
+            const statusEl = document.getElementById("image_status")
+            statusEl.style.color = "var(--text-muted)"
+            statusEl.textContent = "Uploading..."
+
+            const formData = new FormData()
+            formData.append("file", file)
+            formData.append("image_type", type)
+
+            const res = await fetch(`/api/images/upload/${jellyfinId}`, {
+                method: "POST",
+                body: formData
+            })
+            const data = await res.json()
+
+            if (data.error) {
+                statusEl.style.color = "var(--red)"
+                statusEl.textContent = data.error
+            } else {
+                statusEl.style.color = "var(--green)"
+                statusEl.textContent = "✓ " + data.status
+                setTimeout(() => location.reload(), 1500)
+            }
+        }
+
+        async function loadCollection(id, name) {
+            const res = await fetch(`/api/collection/${id}`)
+            const data = await res.json()
+            if (data.error || !data.movies) return
+
+            document.getElementById("collection_section").innerHTML = `
+                <div style="margin-top:8px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                        <div style="font-size:0.85rem;color:var(--text-dim);">Part of <a href="/collection/${id}" style="color:var(--purple);text-decoration:none;">${name}</a></div>
+                        <span style="font-size:0.8rem;color:var(--text-muted);">${data.movies.filter(m=>m.in_library).length} / ${data.movies.length} owned</span>
+                    </div>
+                    <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;">
+                        ${data.movies.map(m => `
+                            <div style="flex-shrink:0;width:100px;cursor:${m.in_library ? 'pointer' : 'default'};opacity:${m.in_library ? '1' : '0.4'};"
+                                onclick="${m.in_library ? `window.location.href='/movie/${m.jellyfin_id}'` : ''}">
+                                <div style="border-radius:8px;overflow:hidden;aspect-ratio:2/3;background:var(--surface2);">
+                                    ${m.poster
+                                        ? `<img src="${m.poster}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">`
+                                        : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🎬</div>`
+                                    }
+                                </div>
+                                <div style="font-size:0.75rem;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-dim);">${m.title}</div>
+                                <div style="font-size:0.7rem;color:var(--text-muted);">${m.year || ''}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `
+        }
+
+        async function replaceFile(input) {
+            const file = input.files[0]
+            if (!file) return
+            const statusEl = document.getElementById("replace_status")
+
+            statusEl.innerHTML = `
+                <div style="margin-bottom:4px;font-size:0.82rem;color:var(--text-muted);">Uploading ${file.name}...</div>
+                <div style="background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;">
+                    <div id="movie_progress_bar" style="height:100%;width:0%;background:var(--purple);transition:width 0.1s;"></div>
+                </div>
+                <div id="movie_progress_text" style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">0%</div>
+            `
+
+            const formData = new FormData()
+            formData.append("file", file)
+            const startTime = Date.now()
+
+            await new Promise((resolve) => {
+                const xhr = new XMLHttpRequest()
+
+                xhr.upload.onprogress = (e) => {
+                    if (!e.lengthComputable) return
+                    const pct = Math.round((e.loaded / e.total) * 100)
+                    const elapsed = (Date.now() - startTime) / 1000
+                    const speed = e.loaded / elapsed
+                    const speedStr = speed > 1048576
+                        ? `${(speed / 1048576).toFixed(1)} MB/s`
+                        : `${(speed / 1024).toFixed(0)} KB/s`
+                    document.getElementById("movie_progress_bar").style.width = `${pct}%`
+                    document.getElementById("movie_progress_text").textContent = `${pct}% — ${speedStr}`
+                }
+
+                xhr.onload = () => {
+                    const data = JSON.parse(xhr.responseText)
+                    if (data.error) {
+                        statusEl.innerHTML = `<span style="color:var(--red);">Error: ${data.error}</span>`
+                    } else {
+                        statusEl.innerHTML = `<span style="color:var(--green);">${data.status}</span>`
+                    }
+                    resolve()
+                }
+
+                xhr.onerror = () => {
+                    statusEl.innerHTML = `<span style="color:var(--red);">Upload failed</span>`
+                    resolve()
+                }
+
+                xhr.open("POST", `/api/replace/movie/${jellyfinId}`)
+                xhr.send(formData)
+            })
+        }
+
+        loadMovie()
+    </script>
+</body>
+</html>

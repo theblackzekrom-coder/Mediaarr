@@ -8,42 +8,85 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="sidebar-logo">Media<span>arr</span></div>
-        <a href="/" class="nav-item">
-            <span class="nav-icon">🔍</span> Search
-        </a>
-        <a href="/library" class="nav-item">
-            <span class="nav-icon">🎬</span> Library
-        </a>
-        <a href="/settings" class="nav-item active">
-            <span class="nav-icon">⚙️</span> Settings
-        </a>
-    </aside>
+    <div class="sidebar-logo">Media<span>arr</span></div>
+    <a href="/" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+        </span> Search
+    </a>
+    <a href="/library" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="2" y="7" width="4" height="14"/><rect x="9" y="4" width="4" height="17"/><rect x="16" y="2" width="4" height="19"/>
+            </svg>
+        </span> Library
+    </a>
+    <a href="/monitor" class="nav-item">
+    <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+    </span> Monitor
+</a>
+    <a href="/collections" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+        </span> Collections
+    </a>
+    <a href="/missing" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+        </span> Missing
+    </a>
+    <a href="/subtitles" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="2" y="4" width="20" height="16" rx="2"/><line x1="7" y1="10" x2="17" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/>
+            </svg>
+        </span> Subtitles
+    </a>
+    <a href="/settings" class="nav-item active">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+        </span> Settings
+    </a>
+</aside>
 
     <div class="main">
         <div class="topbar">
-            <span style="color: var(--text-muted); font-size: 0.9rem;">Settings</span>
+            <span style="color:var(--text-muted);font-size:0.9rem;">Settings</span>
         </div>
 
         <div class="page">
             <div class="settings-tabs">
-                <a href="/settings" class="tab {% if active == 'connections' %}active{% endif %}">
-                    Connections
-                </a>
-                <a href="/settings/profiles" class="tab {% if active == 'profiles' %}active{% endif %}">
-                    Profiles
-                </a>
+                <a href="/settings" class="tab {% if active == 'connections' %}active{% endif %}">Connections</a>
+                <a href="/settings/profiles" class="tab {% if active == 'profiles' %}active{% endif %}">Profiles</a>
             </div>
 
             <div class="settings-box">
                 <form method="POST" action="/settings">
 
                     <div class="settings-section">
-                        <h2>Prowlarr</h2>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+                            <h2 style="margin:0;padding:0;border:none;">Prowlarr</h2>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <span id="test_prowlarr" style="font-size:0.8rem;color:var(--text-muted);"></span>
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="testConnection('prowlarr')">Test</button>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label>URL</label>
                             <input type="text" name="prowlarr_url"
-                                placeholder="http://192.168.1.50:9696"
+                                placeholder="http://your-server:9696"
                                 value="{{ config.get('prowlarr', {}).get('url', '') }}">
                         </div>
                         <div class="form-group">
@@ -55,11 +98,17 @@
                     </div>
 
                     <div class="settings-section">
-                        <h2>qBittorrent</h2>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+                            <h2 style="margin:0;padding:0;border:none;">qBittorrent</h2>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <span id="test_qbittorrent" style="font-size:0.8rem;color:var(--text-muted);"></span>
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="testConnection('qbittorrent')">Test</button>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label>URL</label>
                             <input type="text" name="qbit_url"
-                                placeholder="http://192.168.1.50:8080"
+                                placeholder="http://your-server:8080"
                                 value="{{ config.get('qbittorrent', {}).get('url', '') }}">
                         </div>
                         <div class="form-group">
@@ -71,24 +120,108 @@
                         <div class="form-group">
                             <label>Password</label>
                             <input type="password" name="qbit_password"
-                                placeholder="password"
+                                placeholder="Your password"
                                 value="{{ config.get('qbittorrent', {}).get('password', '') }}">
                         </div>
                     </div>
 
                     <div class="settings-section">
-                        <h2>Jellyfin</h2>
-                        <div class="form-group">
-                            <label>URL</label>
-                            <input type="text" name="jellyfin_url"
-                                placeholder="http://192.168.1.50:8096"
-                                value="{{ config.get('jellyfin', {}).get('url', '') }}">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+                            <h2 style="margin:0;padding:0;border:none;">Media Server</h2>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <span id="test_mediaserver" style="font-size:0.8rem;color:var(--text-muted);"></span>
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="testConnection('mediaserver')">Test</button>
+                            </div>
                         </div>
                         <div class="form-group">
+                            <label>Server Type</label>
+                            <select name="media_server_type" id="server_type_select" onchange="updateServerPlaceholder()">
+                                <option value="jellyfin" {% if config.get('media_server', {}).get('type', 'jellyfin') == 'jellyfin' %}selected{% endif %}>Jellyfin</option>
+                                <option value="emby" {% if config.get('media_server', {}).get('type') == 'emby' %}selected{% endif %}>Emby</option>
+                                <option value="plex" {% if config.get('media_server', {}).get('type') == 'plex' %}selected{% endif %}>Plex</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>URL</label>
+                            <input type="text" name="media_server_url" id="server_url"
+                                placeholder="http://your-server:8096"
+                                value="{{ config.get('media_server', {}).get('url', '') }}">
+                        </div>
+                        <div class="form-group">
+                            <label id="server_key_label">API Key</label>
+                            <input type="text" name="media_server_api_key"
+                                placeholder="Your API key or Plex token"
+                                value="{{ config.get('media_server', {}).get('api_key', '') }}">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>TMDB</h2>
+                        <div class="form-group">
                             <label>API Key</label>
-                            <input type="text" name="jellyfin_api_key"
-                                placeholder="Your Jellyfin API key"
-                                value="{{ config.get('jellyfin', {}).get('api_key', '') }}">
+                            <input type="text" name="tmdb_api_key"
+                                placeholder="Your TMDB API key"
+                                value="{{ config.get('tmdb', {}).get('api_key', '') }}">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>OpenSubtitles</h2>
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <input type="text" name="opensub_api_key"
+                                placeholder="Your OpenSubtitles API key"
+                                value="{{ config.get('opensubtitles', {}).get('api_key', '') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" name="opensub_username"
+                                placeholder="Your OpenSubtitles username"
+                                value="{{ config.get('opensubtitles', {}).get('username', '') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" name="opensub_password"
+                                placeholder="Your OpenSubtitles password"
+                                value="{{ config.get('opensubtitles', {}).get('password', '') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Default Language</label>
+                            <select name="opensub_language">
+                                {% set lang = config.get('opensubtitles', {}).get('language', 'en') %}
+                                <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+                                <option value="es" {% if lang == 'es' %}selected{% endif %}>Spanish</option>
+                                <option value="fr" {% if lang == 'fr' %}selected{% endif %}>French</option>
+                                <option value="de" {% if lang == 'de' %}selected{% endif %}>German</option>
+                                <option value="it" {% if lang == 'it' %}selected{% endif %}>Italian</option>
+                                <option value="pt" {% if lang == 'pt' %}selected{% endif %}>Portuguese</option>
+                                <option value="ru" {% if lang == 'ru' %}selected{% endif %}>Russian</option>
+                                <option value="ja" {% if lang == 'ja' %}selected{% endif %}>Japanese</option>
+                                <option value="ko" {% if lang == 'ko' %}selected{% endif %}> Korean</option>
+                                <option value="zh" {% if lang == 'zh' %}selected{% endif %}>Chinese</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Media Management</h2>
+                        <div class="form-group">
+                            <label>TV Show Folders (comma separated)</label>
+                            <input type="text" name="tv_folders"
+                                placeholder="/mnt/tv, /mnt/drive2/TV"
+                                value="{{ config.get('media', {}).get('tv_folders', []) | join(', ') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Movie Folders (comma separated)</label>
+                            <input type="text" name="movie_folders"
+                                placeholder="/mnt/movies, /mnt/drive2/Movies"
+                                value="{{ config.get('media', {}).get('movie_folders', []) | join(', ') }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Download/Staging Folder</label>
+                            <input type="text" name="download_folder"
+                                placeholder="/mnt/downloads"
+                                value="{{ config.get('media', {}).get('download_folder', '') }}">
                         </div>
                     </div>
 
@@ -97,5 +230,45 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function updateServerPlaceholder() {
+            const type = document.getElementById('server_type_select').value
+            const urlInput = document.getElementById('server_url')
+            const keyLabel = document.getElementById('server_key_label')
+            if (type === 'plex') {
+                urlInput.placeholder = 'http://your-server:32400'
+                keyLabel.textContent = 'Plex Token'
+            } else if (type === 'emby') {
+                urlInput.placeholder = 'http://your-server:8096'
+                keyLabel.textContent = 'API Key'
+            } else {
+                urlInput.placeholder = 'http://your-server:8096'
+                keyLabel.textContent = 'API Key'
+            }
+        }
+
+        async function testConnection(service) {
+            const el = document.getElementById(`test_${service}`)
+            el.style.color = 'var(--text-muted)'
+            el.textContent = 'Testing...'
+            try {
+                const r = await fetch(`/api/test/${service}`)
+                const data = await r.json()
+                if (data.ok) {
+                    el.style.color = 'var(--green)'
+                    el.textContent = '● Connected'
+                } else {
+                    el.style.color = 'var(--red)'
+                    el.textContent = `● ${data.error}`
+                }
+            } catch {
+                el.style.color = 'var(--red)'
+                el.textContent = '● Unreachable'
+            }
+        }
+
+        updateServerPlaceholder()
+    </script>
 </body>
 </html>

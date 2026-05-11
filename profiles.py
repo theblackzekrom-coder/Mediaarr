@@ -64,6 +64,7 @@ ALL_SOURCES = ["REMUX", "BLURAY", "WEB-DL", "WEBRIP", "HDTV"]
 
 DEFAULT_PROFILE = {
     "name": "Default",
+    "media_type": "both",
     "resolutions": ["2160p", "1080p", "720p", "480p"],
     "hdr_formats": ["DOLBY VISION", "HDR10+", "HDR10", "HLG", "SDR"],
     "audio_formats": [

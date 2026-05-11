@@ -1,0 +1,20 @@
+[
+    {
+        "tmdb_id": "279471",
+        "type": "tv",
+        "title": "Malcolm in the Middle: Life's Still Unfair",
+        "added": "2026-05-10",
+        "monitor_type": "all",
+        "storage_path": "/media/jakob/VOIDED LINUX 2.0/downloads",
+        "profile_name": "Default"
+    },
+    {
+        "tmdb_id": "414906",
+        "type": "movie",
+        "title": "The Batman",
+        "added": "2026-05-11",
+        "monitor_type": "all",
+        "storage_path": "/media/jakob/VOIDED LINUX 2.0/downloads",
+        "profile_name": ""
+    }
+]

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediaarr — Setup</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg); margin-left: 0; }
+
+        .wizard {
+            width: 100%;
+            max-width: 640px;
+            padding: 40px 20px;
+        }
+
+        .wizard-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--purple);
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .wizard-logo span { color: var(--text); }
+
+        .wizard-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 40px;
+        }
+
+        .step { display: none; }
+        .step.active { display: block; }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .step-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .server-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .server-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 28px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .server-card:hover {
+            border-color: var(--purple);
+            box-shadow: 0 0 16px var(--purple-glow), 0 0 32px var(--purple-glow);
+            transform: translateY(-2px);
+        }
+
+        .server-card.selected {
+            border-color: var(--purple);
+            background: var(--purple-glow);
+            box-shadow: 0 0 24px var(--purple-glow), 0 0 48px rgba(229,53,53,0.1);
+        }
+
+        .server-card-logo {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .server-card-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .server-card-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .server-card-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+
+        .step-indicator {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.2s;
+        }
+
+        .step-dot.active {
+            background: var(--purple);
+            box-shadow: 0 0 8px var(--purple-glow);
+        }
+
+        .step-dot.done {
+            background: var(--green);
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--purple);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard">
+        <div class="wizard-logo">Media<span>arr</span></div>
+        <div class="wizard-subtitle">Let's get you set up</div>
+
+        <div class="step-indicator">
+            <div class="step-dot active" id="dot_0"></div>
+            <div class="step-dot" id="dot_1"></div>
+            <div class="step-dot" id="dot_2"></div>
+            <div class="step-dot" id="dot_3"></div>
+        </div>
+
+        <!-- Step 0: Welcome -->
+        <div class="step active" id="step_0">
+            <div class="step-title">Welcome to Mediaarr</div>
+            <div class="step-desc">A unified media manager for your self-hosted stack. This wizard will walk you through connecting your services.</div>
+
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;">
+                <div style="display:flex;flex-direction:column;gap:14px;">
+                    <div style="display:flex;gap:14px;align-items:center;">
+                        <span style="font-size:1.3rem;">🎬</span>
+                        <div>
+                            <div style="font-size:0.9rem;font-weight:600;">Library & Search</div>
+                            <div style="font-size:0.8rem;color:var(--text-muted);">Browse your media, search torrents via Prowlarr</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:14px;align-items:center;">
+                        <span style="font-size:1.3rem;">❌</span>
+                        <div>
+                            <div style="font-size:0.9rem;font-weight:600;">Missing Episodes</div>
+                            <div style="font-size:0.8rem;color:var(--text-muted);">Track what you're missing across your shows</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:14px;align-items:center;">
+                        <span style="font-size:1.3rem;">🗂️</span>
+                        <div>
+                            <div style="font-size:0.9rem;font-weight:600;">Collections & Posters</div>
+                            <div style="font-size:0.8rem;color:var(--text-muted);">Auto-group movies, upload custom artwork</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wizard-actions">
+                <span></span>
+                <button class="btn btn-primary" onclick="goStep(1)">Get Started →</button>
+            </div>
+        </div>
+
+        <!-- Step 1: Media Server -->
+        <div class="step" id="step_1">
+            <div class="step-title">Choose your Media Server</div>
+            <div class="step-desc">Select the server you use to stream your media.</div>
+
+            <div class="server-cards">
+                <div class="server-card" id="card_jellyfin" onclick="selectServer('jellyfin')">
+                    <div class="server-card-logo">
+                        <img src="https://cdn.simpleicons.org/jellyfin/00a4dc" alt="Jellyfin">
+                    </div>
+                    <div class="server-card-name">Jellyfin</div>
+                    <div class="server-card-desc">Free & open source</div>
+                </div>
+                <div class="server-card" id="card_emby" onclick="selectServer('emby')">
+                    <div class="server-card-logo">
+                        <img src="https://cdn.simpleicons.org/emby/52b54b" alt="Emby">
+                    </div>
+                    <div class="server-card-name">Emby</div>
+                    <div class="server-card-desc">Media server</div>
+                </div>
+                <div class="server-card" id="card_plex" onclick="selectServer('plex')">
+                    <div class="server-card-logo">
+                        <img src="https://cdn.simpleicons.org/plex/e5a00d" alt="Plex">
+                    </div>
+                    <div class="server-card-name">Plex</div>
+                    <div class="server-card-desc">Requires account</div>
+                </div>
+            </div>
+
+            <div id="server_fields" style="display:none;">
+                <div class="section-label" id="server_section_label">Jellyfin</div>
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="text" id="server_url" placeholder="http://your-server:8096">
+                </div>
+                <div class="form-group">
+                    <label id="server_key_label">API Key</label>
+                    <input type="text" id="server_key" placeholder="Your API key">
+                </div>
+            </div>
+
+            <div class="wizard-actions">
+                <button class="btn btn-ghost" onclick="goStep(0)">← Back</button>
+                <button class="btn btn-primary" onclick="nextFromServer()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Prowlarr + qBit -->
+        <div class="step" id="step_2">
+            <div class="step-title">Torrent Stack</div>
+            <div class="step-desc">Connect Prowlarr for indexer search and qBittorrent for downloads.</div>
+
+            <div class="section-label">Prowlarr</div>
+            <div class="form-group">
+                <label>URL</label>
+                <input type="text" id="prowlarr_url" placeholder="http://your-server:9696">
+            </div>
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="text" id="prowlarr_key" placeholder="Your Prowlarr API key">
+            </div>
+
+            <div class="section-label" style="margin-top:20px;">qBittorrent</div>
+            <div class="form-group">
+                <label>URL</label>
+                <input type="text" id="qbit_url" placeholder="http://your-server:8080">
+            </div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="qbit_username" placeholder="admin">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="qbit_password" placeholder="Your password">
+            </div>
+
+            <div class="wizard-actions">
+                <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+                <button class="btn btn-primary" onclick="goStep(3)">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 3: TMDB + Finish -->
+        <div class="step" id="step_3">
+            <div class="step-title">Metadata & Finish</div>
+            <div class="step-desc">TMDB powers posters, show info, and missing episode tracking.</div>
+
+            <div class="section-label">TMDB</div>
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="text" id="tmdb_key" placeholder="Your TMDB API key">
+            </div>
+
+            <div class="section-label" style="margin-top:20px;">Media Folders</div>
+            <div class="form-group">
+                <label>TV Show Folders (comma separated)</label>
+                <input type="text" id="tv_folders" placeholder="/mnt/tv, /mnt/drive2/TV">
+            </div>
+            <div class="form-group">
+                <label>Movie Folders (comma separated)</label>
+                <input type="text" id="movie_folders" placeholder="/mnt/movies">
+            </div>
+            <div class="form-group">
+                <label>Download Folder</label>
+                <input type="text" id="download_folder" placeholder="/mnt/downloads">
+            </div>
+
+            <div id="save_status" style="font-size:0.85rem;margin-top:12px;"></div>
+
+            <div class="wizard-actions">
+                <button class="btn btn-ghost" onclick="goStep(2)">← Back</button>
+                <button class="btn btn-primary" onclick="saveAndFinish()">Finish →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedServerType = null
+        let currentStep = 0
+
+        function goStep(n) {
+            document.getElementById(`step_${currentStep}`).classList.remove('active')
+            document.getElementById(`dot_${currentStep}`).classList.remove('active')
+            document.getElementById(`dot_${currentStep}`).classList.add('done')
+            currentStep = n
+            document.getElementById(`step_${currentStep}`).classList.add('active')
+            document.getElementById(`dot_${currentStep}`).classList.add('active')
+            document.getElementById(`dot_${currentStep}`).classList.remove('done')
+        }
+
+        function selectServer(type) {
+            selectedServerType = type
+            document.querySelectorAll('.server-card').forEach(c => c.classList.remove('selected'))
+            document.getElementById(`card_${type}`).classList.add('selected')
+
+            const fields = document.getElementById('server_fields')
+            fields.style.display = 'block'
+
+            const label = document.getElementById('server_section_label')
+            const keyLabel = document.getElementById('server_key_label')
+            const urlInput = document.getElementById('server_url')
+
+            if (type === 'plex') {
+                label.textContent = 'Plex'
+                keyLabel.textContent = 'Plex Token'
+                urlInput.placeholder = 'http://your-server:32400'
+            } else if (type === 'emby') {
+                label.textContent = 'Emby'
+                keyLabel.textContent = 'API Key'
+                urlInput.placeholder = 'http://your-server:8096'
+            } else {
+                label.textContent = 'Jellyfin'
+                keyLabel.textContent = 'API Key'
+                urlInput.placeholder = 'http://your-server:8096'
+            }
+        }
+
+        function nextFromServer() {
+            if (!selectedServerType) {
+                alert('Please select a media server first.')
+                return
+            }
+            const url = document.getElementById('server_url').value.trim()
+            const key = document.getElementById('server_key').value.trim()
+            if (!url || !key) {
+                alert('Please enter both URL and API key.')
+                return
+            }
+            goStep(2)
+        }
+
+        async function saveAndFinish() {
+            const statusEl = document.getElementById('save_status')
+            statusEl.style.color = 'var(--text-muted)'
+            statusEl.textContent = 'Saving...'
+
+            const config = {
+                media_server: {
+                    type: selectedServerType,
+                    url: document.getElementById('server_url').value.trim(),
+                    api_key: document.getElementById('server_key').value.trim()
+                },
+                prowlarr: {
+                    url: document.getElementById('prowlarr_url').value.trim(),
+                    api_key: document.getElementById('prowlarr_key').value.trim()
+                },
+                qbittorrent: {
+                    url: document.getElementById('qbit_url').value.trim(),
+                    username: document.getElementById('qbit_username').value.trim(),
+                    password: document.getElementById('qbit_password').value.trim()
+                },
+                tmdb: { api_key: document.getElementById('tmdb_key').value.trim() },
+                opensubtitles: { api_key: "", username: "", password: "", language: "en" },
+                media: {
+                    tv_folders: document.getElementById('tv_folders').value.split(',').map(s => s.trim()).filter(Boolean),
+                    movie_folders: document.getElementById('movie_folders').value.split(',').map(s => s.trim()).filter(Boolean),
+                    download_folder: document.getElementById('download_folder').value.trim()
+                }
+            }
+
+            const res = await fetch('/api/setup', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(config)
+            })
+            const data = await res.json()
+
+            if (data.error) {
+                statusEl.style.color = 'var(--red)'
+                statusEl.textContent = data.error
+            } else {
+                statusEl.style.color = 'var(--green)'
+                statusEl.textContent = '✓ All done!'
+                setTimeout(() => window.location.href = '/', 1000)
+            }
+        }
+    </script>
+</body>
+</html>

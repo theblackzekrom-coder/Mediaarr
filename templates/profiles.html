@@ -8,17 +8,58 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="sidebar-logo">Media<span>arr</span></div>
-        <a href="/" class="nav-item">
-            <span class="nav-icon">🔍</span> Search
-        </a>
-        <a href="/library" class="nav-item">
-            <span class="nav-icon">🎬</span> Library
-        </a>
-        <a href="/settings" class="nav-item active">
-            <span class="nav-icon">⚙️</span> Settings
-        </a>
-    </aside>
+    <div class="sidebar-logo">Media<span>arr</span></div>
+    <a href="/" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+        </span> Search
+    </a>
+    <a href="/library" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="2" y="7" width="4" height="14"/><rect x="9" y="4" width="4" height="17"/><rect x="16" y="2" width="4" height="19"/>
+            </svg>
+        </span> Library
+    </a>
+    <a href="/monitor" class="nav-item">
+    <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+    </span> Monitor
+</a>
+    <a href="/collections" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+        </span> Collections
+    </a>
+    <a href="/missing" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+        </span> Missing
+    </a>
+    <a href="/subtitles" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="2" y="4" width="20" height="16" rx="2"/><line x1="7" y1="10" x2="17" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/>
+            </svg>
+        </span> Subtitles
+    </a>
+    <a href="/settings" class="nav-item active">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+        </span> Settings
+    </a>
+</aside>
 
     <div class="main">
         <div class="topbar">
@@ -33,12 +74,16 @@
 
             <div class="profiles-layout">
 
-                <!-- Profile List -->
                 <div class="profile-list" id="profile_list">
                     {% for p in profiles %}
                     <div class="profile-item {% if p.is_default %}default{% endif %}"
                          onclick="loadProfileEditor('{{ p.name }}')">
-                        <span>{{ p.name }}</span>
+                        <div style="display:flex;flex-direction:column;gap:2px;">
+                            <span>{{ p.name }}</span>
+                            <span style="font-size:0.7rem;color:var(--text-muted);">
+                                {{ '🎬 Movie' if p.get('media_type') == 'movie' else ('📺 TV' if p.get('media_type') == 'tv' else '🎬📺 Both') }}
+                            </span>
+                        </div>
                         {% if p.is_default %}
                         <span class="default-badge">Default</span>
                         {% endif %}
@@ -48,7 +93,6 @@
                         onclick="newProfile()">+ New Profile</button>
                 </div>
 
-                <!-- Profile Editor -->
                 <div class="profile-editor" id="profile_editor">
                     <p style="color: var(--text-muted)">Select a profile to edit</p>
                 </div>
@@ -73,6 +117,7 @@
         function newProfile() {
             renderEditor({
                 name: "",
+                media_type: "both",
                 resolutions: [...allResolutions],
                 hdr_formats: [...allHdr],
                 audio_formats: [...allAudio],
@@ -82,6 +127,7 @@
         }
 
         function renderEditor(profile, isNew = false) {
+            const mt = profile.media_type || "both"
             document.getElementById("profile_editor").innerHTML = `
                 <div class="settings-section">
                     <h2>${isNew ? "New Profile" : "Edit Profile"}</h2>
@@ -89,8 +135,18 @@
                     <div class="form-group">
                         <label>Profile Name</label>
                         <input type="text" id="edit_name" value="${profile.name}"
-                            placeholder="e.g. 4K Remux" class="search-input"
+                            placeholder="e.g. 4K Remux"
                             ${!isNew && profile.name === "Default" ? "readonly" : ""}>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Media Type</label>
+                        <div style="display:flex;gap:8px;margin-top:6px;">
+                            <button type="button" id="mt_both" class="btn ${mt === 'both' ? 'btn-primary' : 'btn-ghost'} btn-sm" onclick="setMediaType('both')">Both</button>
+                            <button type="button" id="mt_movie" class="btn ${mt === 'movie' ? 'btn-primary' : 'btn-ghost'} btn-sm" onclick="setMediaType('movie')">🎬 Movie</button>
+                            <button type="button" id="mt_tv" class="btn ${mt === 'tv' ? 'btn-primary' : 'btn-ghost'} btn-sm" onclick="setMediaType('tv')">📺 TV</button>
+                        </div>
+                        <input type="hidden" id="edit_media_type" value="${mt}">
                     </div>
 
                     <div class="form-group">
@@ -116,6 +172,13 @@
                     </div>
                 </div>
             `
+        }
+
+        function setMediaType(type) {
+            document.getElementById("edit_media_type").value = type
+            document.getElementById("mt_both").className = `btn ${type === 'both' ? 'btn-primary' : 'btn-ghost'} btn-sm`
+            document.getElementById("mt_movie").className = `btn ${type === 'movie' ? 'btn-primary' : 'btn-ghost'} btn-sm`
+            document.getElementById("mt_tv").className = `btn ${type === 'tv' ? 'btn-primary' : 'btn-ghost'} btn-sm`
         }
 
         function renderCheckGroup(label, id, all, selected) {
@@ -157,6 +220,7 @@
 
             const data = {
                 name,
+                media_type: document.getElementById("edit_media_type").value,
                 resolutions: getGroupChecked("edit_res"),
                 hdr_formats: getGroupChecked("edit_hdr"),
                 audio_formats: getGroupChecked("edit_audio"),

@@ -10,13 +10,54 @@
     <aside class="sidebar">
         <div class="sidebar-logo">Media<span>arr</span></div>
         <a href="/" class="nav-item active">
-            <span class="nav-icon">🔍</span> Search
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </span> Search
         </a>
         <a href="/library" class="nav-item">
-            <span class="nav-icon">🎬</span> Library
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <rect x="2" y="7" width="4" height="14"/><rect x="9" y="4" width="4" height="17"/><rect x="16" y="2" width="4" height="19"/>
+                </svg>
+            </span> Library
+        </a>
+        <a href="/monitor" class="nav-item">
+    <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+    </span> Monitor
+</a>
+        <a href="/collections" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+            </span> Collections
+        </a>
+        <a href="/missing" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+            </span> Missing
+        </a>
+        <a href="/subtitles" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/><line x1="7" y1="10" x2="17" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/>
+                </svg>
+            </span> Subtitles
         </a>
         <a href="/settings" class="nav-item">
-            <span class="nav-icon">⚙️</span> Settings
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </span> Settings
         </a>
     </aside>
 
@@ -27,7 +68,9 @@
                 onkeydown="if(event.key === 'Enter') search()">
             <select id="profile_select" class="profile-select" onchange="loadProfile()">
                 {% for p in profiles %}
-                <option value="{{ p.name }}" {% if p.is_default %}selected{% endif %}>
+                <option value="{{ p.name }}"
+                    data-media-type="{{ p.get('media_type', 'both') }}"
+                    {% if p.is_default %}selected{% endif %}>
                     {{ p.name }}
                 </option>
                 {% endfor %}
@@ -37,7 +80,6 @@
 
         <div class="page">
             <div class="filter-panel">
-
                 <div class="filter-group">
                     <div class="filter-label">
                         Resolution
@@ -109,32 +151,15 @@
                         {% endfor %}
                     </div>
                 </div>
-
             </div>
 
+            <div id="media_banner" class="media-banner hidden"></div>
             <div id="results"></div>
         </div>
     </div>
 
-    <!-- File Browser Modal -->
-    <div id="file_modal" class="modal hidden">
-        <div class="modal-box">
-            <div class="modal-header">
-                <span>Select Download Path</span>
-                <button class="modal-close" onclick="closeFileBrowser()">✕</button>
-            </div>
-            <div class="modal-path" id="modal_current_path">—</div>
-            <div class="modal-items" id="modal_items"></div>
-            <div class="modal-footer">
-                <button class="btn btn-ghost" onclick="closeFileBrowser()">Cancel</button>
-                <button class="btn btn-primary" onclick="selectPath()">Select This Folder</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        let currentBrowsePath = null
-        let currentBrowseIndex = 0
+        let currentMediaType = "unknown"
 
         function toggleAny(type) {
             const map = {
@@ -154,6 +179,23 @@
         function getChecked(name) {
             return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
                 .map(cb => cb.value)
+        }
+
+        function filterProfilesByType(mediaType) {
+            const select = document.getElementById("profile_select")
+            const options = select.querySelectorAll("option")
+            options.forEach(opt => {
+                const profileMediaType = opt.dataset.mediaType || "both"
+                const show = profileMediaType === "both" || profileMediaType === mediaType || !mediaType
+                opt.style.display = show ? "" : "none"
+            })
+            for (const opt of options) {
+                if (opt.style.display !== "none") {
+                    select.value = opt.value
+                    loadProfile()
+                    break
+                }
+            }
         }
 
         async function loadProfile() {
@@ -184,6 +226,7 @@
             const profile_name = document.getElementById("profile_select").value
 
             document.getElementById("results").innerHTML = '<p class="loading">Searching...</p>'
+            document.getElementById("media_banner").classList.add("hidden")
 
             const params = new URLSearchParams({
                 query,
@@ -196,6 +239,27 @@
 
             const response = await fetch(`/search?${params}`)
             const data = await response.json()
+
+            if (data.media_info && data.media_info.title) {
+                const info = data.media_info
+                currentMediaType = info.type
+                filterProfilesByType(info.type)
+                const banner = document.getElementById("media_banner")
+                banner.classList.remove("hidden")
+                banner.innerHTML = `
+                    <div class="banner-poster">
+                        ${info.poster
+                            ? `<img src="${info.poster}" alt="${info.title}">`
+                            : `<div class="no-poster">🎬</div>`
+                        }
+                    </div>
+                    <div class="banner-info">
+                        <div class="banner-type">${info.type === "tv" ? "📺 TV Show" : info.type === "movie" ? "🎬 Movie" : "Unknown"}</div>
+                        <h2 class="banner-title">${info.title} ${info.year ? `<span class="banner-year">(${info.year})</span>` : ""}</h2>
+                        <p class="banner-overview">${info.overview || ""}</p>
+                    </div>
+                `
+            }
 
             if (data.error) {
                 document.getElementById("results").innerHTML = `<p class="error">${data.error}</p>`
@@ -214,11 +278,7 @@
                     </div>
                     <p class="result-meta">${r.size_gb} GB &nbsp;·&nbsp; ${r.seeders} Seeders</p>
                     <div class="download-section">
-                        <input type="text" id="save_path_${i}" class="search-input"
-                            placeholder="Click to select folder..." readonly
-                            onclick="openFileBrowser(${i})">
-                        <button class="btn btn-ghost" onclick="openFileBrowser(${i})">Browse</button>
-                        <button class="btn btn-primary" onclick="download('${r.download_url}', ${i})">
+                        <button class="btn btn-primary" onclick="download('${r.download_url}')">
                             Add to qBit
                         </button>
                     </div>
@@ -228,67 +288,20 @@
             document.getElementById("results").innerHTML = html
         }
 
-        async function download(download_url, index) {
-            const save_path = document.getElementById(`save_path_${index}`).value
-            if (!save_path) {
-                alert("Please select a download folder first")
-                return
-            }
+        async function download(download_url) {
             const response = await fetch("/download", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({download_url, save_path})
+                body: JSON.stringify({ download_url, media_type: currentMediaType })
             })
             const data = await response.json()
             alert(data.status)
         }
 
-        async function openFileBrowser(index = 0) {
-            currentBrowseIndex = index
-            document.getElementById("file_modal").classList.remove("hidden")
-            await browseDir(null)
-        }
-
-        async function browseDir(path) {
-            const url = path ? `/browse?path=${encodeURIComponent(path)}` : "/browse"
-            const res = await fetch(url)
-            const data = await res.json()
-
-            currentBrowsePath = data.current
-            document.getElementById("modal_current_path").textContent = data.current || "My Computer"
-
-            let html = ""
-
-            if (data.parent !== null && data.parent !== undefined) {
-                html += `<div class="dir-item" onclick="browseDir('${escPath(data.parent)}')">
-                    <span>⬆️</span> ..
-                </div>`
-            }
-
-            data.items.forEach(item => {
-                html += `<div class="dir-item" onclick="browseDir('${escPath(item.path)}')">
-                    <span>${item.type === "drive" ? "💾" : "📁"}</span> ${item.name}
-                </div>`
-            })
-
-            if (!html) html = '<p style="color: var(--text-muted); padding: 10px;">Empty folder</p>'
-
-            document.getElementById("modal_items").innerHTML = html
-        }
-
-        function escPath(path) {
-            return path.replace(/\\/g, "\\\\").replace(/'/g, "\\'")
-        }
-
-        function selectPath() {
-            if (currentBrowsePath) {
-                document.getElementById(`save_path_${currentBrowseIndex}`).value = currentBrowsePath
-            }
-            closeFileBrowser()
-        }
-
-        function closeFileBrowser() {
-            document.getElementById("file_modal").classList.add("hidden")
+        const prefill = "{{ prefill_query }}"
+        if (prefill) {
+            document.getElementById("query").value = prefill
+            search()
         }
     </script>
 </body>

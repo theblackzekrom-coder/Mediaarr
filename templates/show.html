@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediaarr — Show</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">Media<span>arr</span></div>
+        <a href="/" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </span> Search
+        </a>
+        <a href="/library" class="nav-item active">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <rect x="2" y="7" width="4" height="14"/><rect x="9" y="4" width="4" height="17"/><rect x="16" y="2" width="4" height="19"/>
+                </svg>
+            </span> Library
+        </a>
+        <a href="/monitor" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+            </span> Monitor
+        </a>
+        <a href="/collections" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+            </span> Collections
+        </a>
+        <a href="/missing" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+            </span> Missing
+        </a>
+        <a href="/subtitles" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/><line x1="7" y1="10" x2="17" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/>
+                </svg>
+            </span> Subtitles
+        </a>
+        <a href="/settings" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </span> Settings
+        </a>
+    </aside>
+
+    <div class="main">
+        <div class="topbar">
+            <a href="/library" class="btn btn-ghost">← Back to Library</a>
+        </div>
+
+        <div class="page">
+            <div id="show_header" class="show-header">
+                <p class="loading">Loading...</p>
+            </div>
+
+            <div id="replace_section" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;">
+                <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:12px;">Replace Episodes</div>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;">Select multiple episode files. They will be matched by episode code (S01E01) in the filename.</p>
+                <label class="btn btn-ghost" style="cursor:pointer;">
+                    Select Files
+                    <input type="file" multiple style="display:none;" onchange="previewFiles(this)">
+                </label>
+                <div id="replace_preview" style="margin-top:12px;"></div>
+                <button id="replace_btn" class="btn btn-primary" style="display:none;margin-top:12px;" onclick="uploadEpisodes()">Replace Files</button>
+                <div id="replace_status" style="margin-top:10px;font-size:0.85rem;"></div>
+            </div>
+
+            <div id="seasons_list"></div>
+        </div>
+    </div>
+
+    <style>
+        .monitor-select {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 7px;
+            padding: 5px 10px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .monitor-select:hover {
+            border-color: var(--purple);
+        }
+        .monitor-select.is-monitored {
+            border-color: var(--purple);
+            color: var(--purple);
+        }
+    </style>
+
+    <script>
+        const jellyfinId = "{{ jellyfin_id }}"
+        let selectedFiles = []
+        let episodeIdMap = {}
+        let dualSettings = { show: false, seasons: {} }
+        let showData = null
+        let missingSet = new Set()
+        let currentMonitorType = "unmonitored"
+
+        async function loadShow() {
+            const [showRes, missingRes, episodesRes, dualRes] = await Promise.all([
+                fetch(`/api/show/${jellyfinId}`),
+                fetch(`/api/missing/${jellyfinId}`),
+                fetch(`/api/show/${jellyfinId}/episodes`),
+                fetch(`/api/dual/${jellyfinId}`)
+            ])
+
+            showData = await showRes.json()
+            const missing = await missingRes.json()
+            const episodesData = await episodesRes.json()
+            dualSettings = await dualRes.json()
+
+            if (showData.error) {
+                document.getElementById("show_header").innerHTML = `<p class="error">${showData.error}</p>`
+                return
+            }
+
+            for (const ep of (episodesData.episodes || [])) {
+                const key = `S${String(ep.season).padStart(2,"0")}E${String(ep.episode).padStart(2,"0")}`
+                episodeIdMap[key] = ep.id
+            }
+
+            missingSet = new Set(missing.missing || [])
+
+            // Load monitor status if we have a tmdb_id
+            if (showData.tmdb_id) {
+                const monRes = await fetch(`/api/monitor/check?tmdb_id=${showData.tmdb_id}&type=tv`)
+                const monData = await monRes.json()
+                currentMonitorType = monData.monitored ? (monData.monitor_type || "all") : "unmonitored"
+            }
+
+            renderShow()
+        }
+
+        function renderShow() {
+            document.getElementById("show_header").innerHTML = `
+                <div class="banner-poster" style="position:relative;">
+                    ${showData.poster
+                        ? `<img src="${showData.poster}" alt="${showData.title}">`
+                        : `<div class="no-poster">📺</div>`
+                    }
+                    <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">
+                        <label class="btn btn-ghost btn-sm" style="cursor:pointer;justify-content:center;font-size:0.75rem;">
+                            Change Poster
+                            <input type="file" accept="image/*" style="display:none;" onchange="uploadShowImage(this, 'Primary')">
+                        </label>
+                        <label class="btn btn-ghost btn-sm" style="cursor:pointer;justify-content:center;font-size:0.75rem;">
+                            Change Backdrop
+                            <input type="file" accept="image/*" style="display:none;" onchange="uploadShowImage(this, 'Backdrop')">
+                        </label>
+                    </div>
+                    <div id="show_image_status" style="font-size:0.78rem;margin-top:4px;text-align:center;"></div>
+                </div>
+                <div class="banner-info">
+                    <div class="banner-type">📺 TV Show</div>
+                    <h2 class="banner-title">${showData.title} ${showData.year ? `<span class="banner-year">(${showData.year})</span>` : ""}</h2>
+                    <p class="banner-overview">${showData.overview || ""}</p>
+                    <p class="missing-count" id="missing_count">${missingSet.size} missing episodes</p>
+                    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
+                        <button class="btn btn-ghost btn-sm" onclick="toggleReplace()">Replace Episodes</button>
+                        <button class="btn btn-ghost btn-sm" id="dual_show_btn"
+                            style="${dualSettings.show ? 'color:var(--purple);border-color:var(--purple);' : ''}"
+                            onclick="toggleDualShow()">Dual Episodes</button>
+                        ${showData.tmdb_id ? `
+                        <select class="monitor-select ${currentMonitorType !== 'unmonitored' ? 'is-monitored' : ''}"
+                            id="monitor_select" onchange="setMonitorType(this.value)">
+                            <option value="unmonitored" ${currentMonitorType === 'unmonitored' ? 'selected' : ''}>Unmonitored</option>
+                            <option value="all" ${currentMonitorType === 'all' ? 'selected' : ''}>Monitor All</option>
+                            <option value="new_only" ${currentMonitorType === 'new_only' ? 'selected' : ''}>Monitor New Only</option>
+                        </select>
+                        ` : ''}
+                    </div>
+                </div>
+            `
+
+            document.getElementById("replace_section").style.display = "none"
+            renderSeasons()
+        }
+
+        async function setMonitorType(value) {
+            const select = document.getElementById("monitor_select")
+            currentMonitorType = value
+
+            if (value === "unmonitored") {
+                await fetch('/api/monitor/remove', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({tmdb_id: showData.tmdb_id, type: 'tv'})
+                })
+                select.classList.remove('is-monitored')
+            } else {
+                await fetch('/api/monitor/add', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        tmdb_id: showData.tmdb_id,
+                        type: 'tv',
+                        title: showData.title,
+                        monitor_type: value
+                    })
+                })
+                select.classList.add('is-monitored')
+            }
+        }
+
+        function renderSeasons() {
+            const seasonsHtml = Object.entries(showData.seasons || {}).map(([season, episodes]) => {
+                const seasonDual = dualSettings.seasons?.[String(season)] ?? dualSettings.show
+                return `
+                <div class="season-block">
+                    <div class="season-header" style="display:flex;justify-content:space-between;align-items:center;">
+                        <span>Season ${season}</span>
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            <button class="btn btn-ghost btn-sm" id="dual_s${season}_btn"
+                                style="font-size:0.75rem;${seasonDual ? 'color:var(--purple);border-color:var(--purple);' : ''}"
+                                onclick="toggleDualSeason(${season})">Dual Ep</button>
+                            <label class="btn btn-ghost btn-sm" style="cursor:pointer;font-size:0.75rem;">
+                                Season Poster
+                                <input type="file" accept="image/*" style="display:none;" onchange="uploadSeasonImage(this, ${season})">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="episode-list">
+                        ${episodes.map(ep => {
+                            const key = `S${String(season).padStart(2,"0")}E${String(ep.episode_number).padStart(2,"0")}`
+                            const isMissing = missingSet.has(key)
+                            return `
+                                <div class="episode-item ${isMissing ? "missing" : "have"}">
+                                    <div class="episode-status">${isMissing ? "❌" : "✅"}</div>
+                                    <div class="episode-info">
+                                        <span class="episode-code">${key}</span>
+                                        <span class="episode-name">${ep.name}</span>
+                                    </div>
+                                    <div style="display:flex;gap:6px;align-items:center;">
+                                        ${isMissing ? `
+                                            <button class="btn btn-primary btn-sm"
+                                                onclick="searchEpisode('${showData.title}', ${season}, ${ep.episode_number})">
+                                                Find
+                                            </button>
+                                        ` : ""}
+                                        ${episodeIdMap[key] ? `
+                                            <label class="btn btn-ghost btn-sm" style="cursor:pointer;font-size:0.72rem;" title="Upload title card">
+                                                🖼
+                                                <input type="file" accept="image/*" style="display:none;"
+                                                    onchange="uploadTitleCard(this, '${episodeIdMap[key]}', '${key}')">
+                                            </label>
+                                        ` : ""}
+                                    </div>
+                                </div>
+                            `
+                        }).join("")}
+                    </div>
+                </div>
+            `}).join("")
+
+            document.getElementById("seasons_list").innerHTML = seasonsHtml
+        }
+
+        async function saveDualSettings() {
+            await fetch(`/api/dual/${jellyfinId}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(dualSettings)
+            })
+            await refreshMissing()
+        }
+
+        async function refreshMissing() {
+            const res = await fetch(`/api/missing/${jellyfinId}`)
+            const data = await res.json()
+            missingSet = new Set(data.missing || [])
+            document.getElementById("missing_count").textContent = `${missingSet.size} missing episodes`
+            renderSeasons()
+        }
+
+        function toggleDualShow() {
+            dualSettings.show = !dualSettings.show
+            const btn = document.getElementById("dual_show_btn")
+            btn.style.color = dualSettings.show ? "var(--purple)" : ""
+            btn.style.borderColor = dualSettings.show ? "var(--purple)" : ""
+            saveDualSettings()
+        }
+
+        function toggleDualSeason(season) {
+            if (!dualSettings.seasons) dualSettings.seasons = {}
+            const current = dualSettings.seasons[String(season)] ?? dualSettings.show
+            dualSettings.seasons[String(season)] = !current
+            const btn = document.getElementById(`dual_s${season}_btn`)
+            btn.style.color = !current ? "var(--purple)" : ""
+            btn.style.borderColor = !current ? "var(--purple)" : ""
+            saveDualSettings()
+        }
+
+        async function uploadShowImage(input, type) {
+            const file = input.files[0]
+            if (!file) return
+            const statusEl = document.getElementById("show_image_status")
+            statusEl.style.color = "var(--text-muted)"
+            statusEl.textContent = "Uploading..."
+
+            const formData = new FormData()
+            formData.append("file", file)
+            formData.append("image_type", type)
+
+            const res = await fetch(`/api/images/upload/${jellyfinId}`, {
+                method: "POST",
+                body: formData
+            })
+            const data = await res.json()
+
+            if (data.error) {
+                statusEl.style.color = "var(--red)"
+                statusEl.textContent = data.error
+            } else {
+                statusEl.style.color = "var(--green)"
+                statusEl.textContent = "✓ Done"
+                setTimeout(() => location.reload(), 1500)
+            }
+        }
+
+        async function uploadSeasonImage(input, season) {
+            const file = input.files[0]
+            if (!file) return
+
+            const res1 = await fetch(`/api/show/${jellyfinId}/seasons`)
+            const seasonData = await res1.json()
+            const seasonItem = (seasonData.seasons || []).find(s => s.index === parseInt(season))
+
+            if (!seasonItem) {
+                alert(`Could not find Season ${season} in media server`)
+                return
+            }
+
+            const formData = new FormData()
+            formData.append("file", file)
+            formData.append("image_type", "Primary")
+
+            const res = await fetch(`/api/images/upload/${seasonItem.id}`, {
+                method: "POST",
+                body: formData
+            })
+            const data = await res.json()
+            alert(data.error ? `Error: ${data.error}` : `✓ Season ${season} poster updated`)
+        }
+
+        async function uploadTitleCard(input, episodeId, key) {
+            const file = input.files[0]
+            if (!file) return
+
+            const formData = new FormData()
+            formData.append("file", file)
+
+            const res = await fetch(`/api/images/upload/episode/${episodeId}`, {
+                method: "POST",
+                body: formData
+            })
+            const data = await res.json()
+
+            const statusId = `tc_status_${key}`
+            let statusEl = document.getElementById(statusId)
+            if (!statusEl) {
+                const epItem = input.closest(".episode-item")
+                if (epItem) {
+                    statusEl = document.createElement("span")
+                    statusEl.id = statusId
+                    statusEl.style.fontSize = "0.75rem"
+                    epItem.appendChild(statusEl)
+                }
+            }
+            if (statusEl) {
+                statusEl.style.color = data.error ? "var(--red)" : "var(--green)"
+                statusEl.textContent = data.error ? "✗" : "✓"
+            }
+        }
+
+        function toggleReplace() {
+            const el = document.getElementById("replace_section")
+            el.style.display = el.style.display === "none" ? "block" : "none"
+        }
+
+        function previewFiles(input) {
+            selectedFiles = Array.from(input.files)
+            const preview = document.getElementById("replace_preview")
+            const btn = document.getElementById("replace_btn")
+
+            if (!selectedFiles.length) {
+                preview.innerHTML = ""
+                btn.style.display = "none"
+                return
+            }
+
+            preview.innerHTML = `
+                <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+                    ${selectedFiles.map((f, i) => {
+                        const match = f.name.match(/[Ss](\d+)[Ee](\d+)/)
+                        const code = match ? `S${match[1].padStart(2,"0")}E${match[2].padStart(2,"0")}` : ""
+                        return `
+                            <div style="display:flex;align-items:center;gap:10px;font-size:0.82rem;padding:8px 12px;background:var(--surface2);border-radius:6px;">
+                                <span style="color:var(--text-dim);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${f.name}">${f.name}</span>
+                                <span style="color:var(--text-muted);flex-shrink:0;">→</span>
+                                <input id="code_${i}" value="${code}" placeholder="S01E01"
+                                    style="width:80px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--purple);font-weight:600;font-size:0.82rem;outline:none;text-align:center;">
+                                <label style="display:flex;align-items:center;gap:5px;font-size:0.78rem;color:var(--text-muted);white-space:nowrap;cursor:pointer;">
+                                    <input type="checkbox" id="dual_${i}" style="accent-color:var(--purple);"> Dual ep
+                                </label>
+                            </div>
+                        `
+                    }).join("")}
+                </div>
+            `
+            btn.style.display = "inline-flex"
+        }
+
+        async function uploadEpisodes() {
+            if (!selectedFiles.length) return
+            const statusEl = document.getElementById("replace_status")
+
+            const formData = new FormData()
+            const meta = []
+
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const code = document.getElementById(`code_${i}`).value.trim()
+                const dual = document.getElementById(`dual_${i}`).checked
+                if (!code) {
+                    statusEl.innerHTML = `<span style="color:var(--red);">File ${selectedFiles[i].name} has no episode code.</span>`
+                    return
+                }
+                formData.append("files", selectedFiles[i])
+                meta.push({ code, dual })
+            }
+
+            formData.append("meta", JSON.stringify(meta))
+
+            statusEl.innerHTML = `
+                <div style="margin-bottom:4px;font-size:0.82rem;color:var(--text-muted);">Uploading ${selectedFiles.length} file(s)...</div>
+                <div style="background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;">
+                    <div id="ep_progress_bar" style="height:100%;width:0%;background:var(--purple);transition:width 0.1s;"></div>
+                </div>
+                <div id="ep_progress_text" style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">0%</div>
+            `
+
+            const startTime = Date.now()
+
+            await new Promise((resolve) => {
+                const xhr = new XMLHttpRequest()
+
+                xhr.upload.onprogress = (e) => {
+                    if (!e.lengthComputable) return
+                    const pct = Math.round((e.loaded / e.total) * 100)
+                    const elapsed = (Date.now() - startTime) / 1000
+                    const speed = e.loaded / elapsed
+                    const speedStr = speed > 1048576
+                        ? `${(speed / 1048576).toFixed(1)} MB/s`
+                        : `${(speed / 1024).toFixed(0)} KB/s`
+                    document.getElementById("ep_progress_bar").style.width = `${pct}%`
+                    document.getElementById("ep_progress_text").textContent = `${pct}% — ${speedStr}`
+                }
+
+                xhr.onload = () => {
+                    const data = JSON.parse(xhr.responseText)
+                    if (data.error) {
+                        statusEl.innerHTML = `<span style="color:var(--red);">Error: ${data.error}</span>`
+                    } else {
+                        statusEl.innerHTML = data.results.map(r => `
+                            <div style="color:${r.status.startsWith('✓') ? 'var(--green)' : 'var(--red)'};">
+                                ${r.status} — ${r.file}
+                            </div>
+                        `).join("")
+                    }
+                    resolve()
+                }
+
+                xhr.onerror = () => {
+                    statusEl.innerHTML = `<span style="color:var(--red);">Upload failed</span>`
+                    resolve()
+                }
+
+                xhr.open("POST", `/api/replace/episodes/${jellyfinId}`)
+                xhr.send(formData)
+            })
+        }
+
+        function searchEpisode(title, season, episode) {
+            const s = String(season).padStart(2, "0")
+            const e = String(episode).padStart(2, "0")
+            window.location.href = `/?q=${encodeURIComponent(title + ' S' + s + 'E' + e)}`
+        }
+
+        loadShow()
+    </script>
+</body>
+</html>

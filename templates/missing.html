@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediaarr — Missing Episodes</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<aside class="sidebar">
+    <div class="sidebar-logo">Media<span>arr</span></div>
+    <a href="/" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+        </span> Search
+    </a>
+    <a href="/library" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="2" y="7" width="4" height="14"/><rect x="9" y="4" width="4" height="17"/><rect x="16" y="2" width="4" height="19"/>
+            </svg>
+        </span> Library
+    </a>
+    <a href="/monitor" class="nav-item">
+    <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+    </span> Monitor
+</a>
+    <a href="/collections" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+        </span> Collections
+    </a>
+    <a href="/missing" class="nav-item active">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+        </span> Missing
+    </a>
+    <a href="/subtitles" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <rect x="2" y="4" width="20" height="16" rx="2"/><line x1="7" y1="10" x2="17" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/>
+            </svg>
+        </span> Subtitles
+    </a>
+    <a href="/settings" class="nav-item">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+        </span> Settings
+    </a>
+</aside>
+
+    <div class="main">
+        <div class="topbar">
+            <span style="color: var(--text-muted); font-size: 0.9rem;">Missing Episodes</span>
+            <span id="missing_count" style="color: var(--text-muted); font-size: 0.85rem; margin-left: auto;"></span>
+        </div>
+
+        <div class="page">
+            <div id="missing_list"></div>
+        </div>
+    </div>
+
+    <script>
+        let totalMissing = 0
+
+        async function loadMissing() {
+            const res = await fetch('/api/library')
+            const data = await res.json()
+
+            if (data.error) {
+                document.getElementById('missing_list').innerHTML = `<p class="error">${data.error}</p>`
+                return
+            }
+
+            const shows = data.items.filter(i => i.type === 'tv')
+
+            if (!shows.length) {
+                document.getElementById('missing_list').innerHTML = '<p class="loading">No TV shows in library.</p>'
+                return
+            }
+
+            document.getElementById('missing_list').innerHTML = shows.map(show => `
+                <div id="show_${show.id}" class="season-block">
+                    <div class="season-header" style="display:flex;justify-content:space-between;align-items:center;">
+                        <a href="/show/${show.id}" style="color:var(--purple);text-decoration:none;">${show.title}</a>
+                        <span id="count_${show.id}" style="font-size:0.8rem;color:var(--text-muted);font-weight:400;">Checking...</span>
+                    </div>
+                    <div id="eps_${show.id}"></div>
+                </div>
+            `).join('')
+
+            for (const show of shows) {
+                fetchShowMissing(show)
+            }
+        }
+
+        async function fetchShowMissing(show) {
+            try {
+                const res = await fetch(`/api/missing/${show.id}`)
+                const data = await res.json()
+                const missing = data.missing || []
+
+                const countEl = document.getElementById(`count_${show.id}`)
+                const epsEl = document.getElementById(`eps_${show.id}`)
+
+                if (!missing.length) {
+                    countEl.style.color = 'var(--green)'
+                    countEl.textContent = '✓ Complete'
+                    return
+                }
+
+                totalMissing += missing.length
+                document.getElementById('missing_count').textContent = `${totalMissing} missing`
+
+                countEl.style.color = 'var(--red)'
+                countEl.textContent = `${missing.length} missing`
+
+                epsEl.innerHTML = `
+                    <div class="episode-list" style="margin-top:8px;">
+                        ${missing.map(ep => `
+                            <div class="episode-item missing">
+                                <div class="episode-status">❌</div>
+                                <div class="episode-info">
+                                    <span class="episode-code">${ep}</span>
+                                </div>
+                                <button class="btn btn-primary btn-sm"
+                                    onclick="searchEpisode('${show.title}', '${ep}')">
+                                    Find
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `
+            } catch {
+                document.getElementById(`count_${show.id}`).textContent = 'Error'
+            }
+        }
+
+        function searchEpisode(show, episode) {
+            window.location.href = `/?q=${encodeURIComponent(show + ' ' + episode)}`
+        }
+
+        loadMissing()
+    </script>
+</body>
+</html>

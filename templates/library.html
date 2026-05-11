@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediaarr — Library</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">Media<span>arr</span></div>
+        <a href="/" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </span> Search
+        </a>
+        <a href="/library" class="nav-item active">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <rect x="2" y="7" width="4" height="14"/><rect x="9" y="4" width="4" height="17"/><rect x="16" y="2" width="4" height="19"/>
+                </svg>
+            </span> Library
+        </a>
+        <a href="/monitor" class="nav-item">
+    <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+    </span> Monitor
+</a>
+        <a href="/collections" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+            </span> Collections
+        </a>
+        <a href="/missing" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+            </span> Missing
+        </a>
+        <a href="/subtitles" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/><line x1="7" y1="10" x2="17" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/>
+                </svg>
+            </span> Subtitles
+        </a>
+        <a href="/settings" class="nav-item">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </span> Settings
+        </a>
+    </aside>
+
+    <div class="main">
+        <div class="topbar">
+            <div class="lib-tabs">
+                <button class="tab-btn active" onclick="filterType('all', this)">All</button>
+                <button class="tab-btn" onclick="filterType('tv', this)">TV Shows</button>
+                <button class="tab-btn" onclick="filterType('movie', this)">Movies</button>
+            </div>
+            <input type="text" id="lib_search" class="search-input"
+                placeholder="Filter library..."
+                oninput="renderLibrary()"
+                style="max-width: 280px; margin-left: auto;">
+        </div>
+
+        <div class="page">
+            <div id="library_grid" class="library-grid">
+                <p class="loading">Loading library...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allItems = []
+        let currentType = 'all'
+
+        async function loadLibrary() {
+            const res = await fetch('/api/library')
+            const data = await res.json()
+
+            if (data.error) {
+                document.getElementById('library_grid').innerHTML = `<p class="error">${data.error}</p>`
+                return
+            }
+
+            allItems = data.items
+            renderLibrary()
+        }
+
+        function filterType(type, btn) {
+            currentType = type
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+            btn.classList.add('active')
+            renderLibrary()
+        }
+
+        function renderLibrary() {
+            const query = document.getElementById('lib_search').value.toLowerCase()
+            const filtered = allItems.filter(item => {
+                const matchType = currentType === 'all' || item.type === currentType
+                const matchQuery = !query || item.title.toLowerCase().includes(query)
+                return matchType && matchQuery
+            })
+
+            if (!filtered.length) {
+                document.getElementById('library_grid').innerHTML = '<p class="loading">No items found.</p>'
+                return
+            }
+
+            document.getElementById('library_grid').innerHTML = filtered.map(item => `
+                <div class="library-card" onclick="openItem('${item.id}', '${item.type}')">
+                    <div class="library-poster">
+                        ${item.poster
+                            ? `<img src="${item.poster}" alt="${item.title}" loading="lazy">`
+                            : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">${item.type === 'tv' ? '📺' : '🎬'}</div>`
+                        }
+                        <div class="library-type-badge">${item.type === 'tv' ? 'TV' : 'Movie'}</div>
+                    </div>
+                    <div class="library-info">
+                        <div class="library-title">${item.title}</div>
+                        <div class="library-year">${item.year || ''}</div>
+                    </div>
+                </div>
+            `).join('')
+        }
+
+        function openItem(jellyfinId, type) {
+            if (type === 'tv') {
+                window.location.href = `/show/${jellyfinId}`
+            } else {
+                window.location.href = `/movie/${jellyfinId}`
+            }
+        }
+
+        loadLibrary()
+    </script>
+</body>
+</html>
